@@ -1,6 +1,10 @@
 # Agent Reliability Lab
 
+[![CI](https://github.com/lpy235/agent-reliability-lab/actions/workflows/ci.yml/badge.svg)](https://github.com/lpy235/agent-reliability-lab/actions/workflows/ci.yml)
+
 Agent Reliability Lab is a lightweight evaluation and observability toolkit for LLM agents. It makes agent behavior recordable, inspectable, and regression-testable instead of treating each run as a black box.
+
+![Dashboard preview](docs/assets/dashboard.png)
 
 ## Why This Exists
 
@@ -27,7 +31,7 @@ LLM agents often change behavior when prompts, models, tools, or retrieval data 
 - Run-to-run diff reports for answer, retrieval, steps, citations, and latency
 - Compact browser dashboard for run and trace inspection
 - FastAPI endpoints for manual run inspection
-- GitHub Actions CI template for tests and the MVP harness
+- GitHub Actions CI for tests and the MVP harness
 
 ## Architecture
 
@@ -112,19 +116,16 @@ Static examples:
 - [Sample run diff](docs/examples/run-diff.md)
 - [GitHub Actions CI template](docs/examples/github-actions-ci.yml)
 
-## Enable GitHub Actions
+## Continuous Verification
 
-The CI template runs `pytest` and `harness.py`. To enable it in this repository, copy it into GitHub's workflow directory:
+GitHub Actions runs the same local verification path on every push and pull request:
 
 ```bash
-mkdir -p .github/workflows
-cp docs/examples/github-actions-ci.yml .github/workflows/ci.yml
-git add .github/workflows/ci.yml
-git commit -m "ci: enable github actions"
-git push
+python -m pytest -v
+python harness.py
 ```
 
-GitHub requires the pushing credential to have `workflow` permission for this step.
+The reusable workflow template is also kept at [docs/examples/github-actions-ci.yml](docs/examples/github-actions-ci.yml).
 
 ## Run JSONL Evals
 
@@ -211,10 +212,6 @@ This project is not a chat demo. It demonstrates reliability engineering for too
 - lightweight safety checks for PII and tool policy violations
 - inspectable RAG groundedness checks
 - API and CLI surfaces over the same core agent logic
-
-## Roadmap
-
-- Add GitHub Actions report artifacts
 
 ## Project Documents
 
