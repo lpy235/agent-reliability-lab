@@ -1,0 +1,2 @@
+{"case_id":"docs_qa_001","agent":"docs_qa","input":{"question":"How do I configure the database?"},"expected":{"required_citations":["sample_docs/config.md"],"required_keywords":["DATABASE_URL"],"forbidden_keywords":["I don't know"],"max_latency_ms":5000,"grounded":true}}
+{"case_id":"docs_qa_002","agent":"docs_qa","input":{"question":"How do I run the API server?"},"expected":{"required_citations":["sample_docs/deployment.md"],"required_keywords":["uvicorn"],"forbidden_keywords":["I don't know"],"max_latency_ms":5000,"grounded":true}}
