@@ -83,6 +83,8 @@ def test_run_eval_file_supports_issue_triage(tmp_path):
                     "label": "bug",
                     "priority": "high",
                     "required_tool_calls": ["search_similar_issues", "assign_label"],
+                    "required_safety_checks": ["approval_required"],
+                    "max_safety_violations": 1,
                 },
             }
         )

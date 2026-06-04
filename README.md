@@ -21,6 +21,7 @@ LLM agents often change behavior when prompts, models, tools, or retrieval data 
 - Dry-run Issue Triage agent with simulated tool calls
 - JSONL regression test suite
 - Groundedness, citation, keyword, and latency checks
+- PII redaction and dry-run tool policy checks
 - Markdown eval reports for prompt and model changes
 - Saved-run replay with fixed retrieved context
 - Run-to-run diff reports for answer, retrieval, steps, citations, and latency
@@ -52,6 +53,7 @@ Core modules:
 - `agents/`: retrieval, LLM clients, and Docs QA orchestration
 - `agents/issue_triage_agent.py`: deterministic issue triage and dry-run tool calls
 - `tracing/`: trace models, SDK, and SQLite persistence
+- `safety/`: PII redaction and tool policy checks
 - `evals/`: JSONL case loading, metrics, report generation, and CLI runner
 - `app/`: FastAPI endpoints
 - `harness.py`: one-command MVP demo
@@ -141,6 +143,8 @@ python -m evals.runner evals/cases/issue_triage.jsonl \
   --report-path reports/issue-triage-report.md
 ```
 
+Issue triage evals can assert required tool calls, forbidden tool calls, PII redaction, approval-required tools, and maximum safety violations.
+
 ## Replay And Diff Runs
 
 Replay a saved run with its original retrieved chunks:
@@ -196,13 +200,13 @@ This project is not a chat demo. It demonstrates reliability engineering for too
 - regression testing for prompt and retrieval behavior
 - replay and diff workflows for saved agent behavior
 - dry-run tool-call reliability checks for issue triage
+- lightweight safety checks for PII and tool policy violations
 - inspectable RAG groundedness checks
 - API and CLI surfaces over the same core agent logic
 
 ## Roadmap
 
 - Add a compact dashboard for trace timeline inspection
-- Add safety checks for PII, forbidden tools, and approval-required tools
 - Add GitHub Actions report artifacts
 
 ## Project Documents

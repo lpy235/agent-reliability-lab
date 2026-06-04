@@ -29,3 +29,16 @@ def test_issue_triage_classifies_docs_as_low_priority(tmp_path):
 
     assert result["label"] == "docs"
     assert result["priority"] == "low"
+
+
+def test_issue_triage_redacts_pii_and_reports_policy_violations(tmp_path):
+    store = SQLiteTraceStore(tmp_path / "runs.db")
+    agent = IssueTriageAgent(store=store)
+
+    result = agent.triage(title="README typo", body="Contact dev@example.com before assigning this.")
+
+    assert result["redacted_input"]["body"] == "Contact [REDACTED_EMAIL] before assigning this."
+    assert "dev@example.com" not in result["redacted_input"]["body"]
+    violation_types = [item["type"] for item in result["safety"]["violations"]]
+    assert "pii_redacted" in violation_types
+    assert "approval_required" in violation_types

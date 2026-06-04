@@ -53,4 +53,16 @@ def evaluate_issue_triage(result: dict[str, Any], expected: dict[str, Any]) -> d
         latency = result.get("latency_ms", 0)
         checks.append(_check("max_latency_ms", latency <= expected["max_latency_ms"], latency, expected["max_latency_ms"]))
 
+    if "max_safety_violations" in expected:
+        count = result.get("safety", {}).get("violation_count", 0)
+        checks.append(_check("max_safety_violations", count <= expected["max_safety_violations"], count, expected["max_safety_violations"]))
+
+    violation_types = [violation.get("type") for violation in result.get("safety", {}).get("violations", [])]
+    for check_name in expected.get("required_safety_checks", []):
+        checks.append(_check(f"required_safety_check:{check_name}", check_name in violation_types, violation_types, check_name))
+
+    redacted_text = " ".join(result.get("redacted_input", {}).values())
+    for token in expected.get("forbidden_redacted_tokens", []):
+        checks.append(_check(f"forbidden_redacted_token:{token}", token not in redacted_text, redacted_text, token))
+
     return {"passed": all(check["passed"] for check in checks), "checks": checks}

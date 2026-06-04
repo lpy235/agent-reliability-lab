@@ -17,6 +17,17 @@
       "mode": "dry_run"
     }
   ],
+  "safety": {
+    "pii_findings": [],
+    "violations": [
+      {
+        "type": "approval_required",
+        "tool_name": "assign_label",
+        "mode": "dry_run"
+      }
+    ],
+    "violation_count": 1
+  },
   "latency_ms": 1,
   "run_id": "run_example_issue_triage_001"
 }
