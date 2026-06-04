@@ -18,7 +18,8 @@ def load_documents(docs_dir: str | Path) -> list[dict[str, str]]:
     for path in sorted(root.rglob("*")):
         if path.suffix.lower() not in {".md", ".txt"}:
             continue
-        docs.append({"source": str(path), "text": path.read_text(encoding="utf-8")})
+        source = str(Path(root.name) / path.relative_to(root))
+        docs.append({"source": source, "text": path.read_text(encoding="utf-8")})
 
     if not docs:
         raise ValueError(f"No markdown or text documents found in {root}")

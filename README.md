@@ -69,9 +69,9 @@ Core modules:
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-python -m pip install -r requirements.txt
+python -m pip install -e ".[dev]"
 python -m pytest -v
-python harness.py
+arl-harness
 ```
 
 The harness runs one sample Docs QA question, executes the JSONL eval suite, stores traces in `runs.db`, and writes a Markdown report to `reports/eval-report.md`.
@@ -81,7 +81,7 @@ The harness runs one sample Docs QA question, executes the JSONL eval suite, sto
 Run the harness:
 
 ```bash
-python harness.py
+arl-harness
 ```
 
 Expected summary shape:
@@ -118,11 +118,11 @@ Static examples:
 
 ## Continuous Verification
 
-GitHub Actions runs the same local verification path on every push and pull request:
+Use the same verification path locally and in the packaged CI template:
 
 ```bash
 python -m pytest -v
-python harness.py
+arl-harness
 ```
 
 The reusable workflow template is also kept at [docs/examples/github-actions-ci.yml](docs/examples/github-actions-ci.yml).
@@ -130,7 +130,7 @@ The reusable workflow template is also kept at [docs/examples/github-actions-ci.
 ## Run JSONL Evals
 
 ```bash
-python -m evals.runner evals/cases/docs_qa.jsonl \
+arl-eval evals/cases/docs_qa.jsonl \
   --docs-dir sample_docs \
   --db-path runs.db \
   --report-path reports/eval-report.md
@@ -141,7 +141,7 @@ The eval command exits with a nonzero status when any case fails, so it can be u
 Run the issue triage eval suite:
 
 ```bash
-python -m evals.runner evals/cases/issue_triage.jsonl \
+arl-eval evals/cases/issue_triage.jsonl \
   --db-path runs.db \
   --report-path reports/issue-triage-report.md
 ```
@@ -153,13 +153,13 @@ Issue triage evals can assert required tool calls, forbidden tool calls, PII red
 Replay a saved run with its original retrieved chunks:
 
 ```bash
-python -m tracing.replay <run_id> --db-path runs.db
+arl-replay <run_id> --db-path runs.db
 ```
 
 Compare two saved runs and write a Markdown report:
 
 ```bash
-python -m tracing.diff <base_run_id> <candidate_run_id> \
+arl-diff <base_run_id> <candidate_run_id> \
   --db-path runs.db \
   --report-path reports/run-diff.md
 ```
@@ -169,7 +169,7 @@ Replay is useful when you want to rerun the same input while controlling retriev
 ## Run Docs QA Through The API
 
 ```bash
-uvicorn app.main:app --reload
+arl-api --reload
 ```
 
 Open the dashboard:
@@ -213,14 +213,25 @@ This project is not a chat demo. It demonstrates reliability engineering for too
 - inspectable RAG groundedness checks
 - API and CLI surfaces over the same core agent logic
 
+## CLI Commands
+
+- `arl-harness`: run the local demo, Docs QA evals, and issue triage evals.
+- `arl-eval`: run a JSONL eval file and write a Markdown report.
+- `arl-replay`: replay a saved Docs QA run with fixed or live retrieval context.
+- `arl-diff`: compare two saved runs and optionally write a Markdown diff report.
+- `arl-api`: start the FastAPI app and browser dashboard.
+
 ## Project Documents
 
 - [Project overview](Agent_Reliability_Lab_项目说明.md)
 - [MVP design spec](docs/superpowers/specs/2026-06-04-agent-reliability-lab-mvp-design.md)
 - [MVP implementation plan](docs/superpowers/plans/2026-06-04-agent-reliability-lab-mvp.md)
 - [GitHub presentation and CI plan](docs/superpowers/plans/2026-06-04-github-presentation-ci.md)
+- [Replay and diff design](docs/superpowers/specs/2026-06-04-replay-diff-design.md)
 - [Issue Triage Agent design](docs/superpowers/specs/2026-06-04-issue-triage-agent-design.md)
+- [Safety and tool policy design](docs/superpowers/specs/2026-06-04-safety-tool-policy-design.md)
 - [Dashboard design](docs/superpowers/specs/2026-06-04-dashboard-design.md)
+- [CLI packaging design](docs/superpowers/specs/2026-06-04-cli-packaging-design.md)
 
 ## Tech Stack
 

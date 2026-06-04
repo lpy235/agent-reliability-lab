@@ -6,6 +6,7 @@ from pathlib import Path
 
 from agents.docs_qa_agent import DocsQAAgent
 from agents.llm import RuleBasedLLMClient
+from agents.paths import resolve_demo_path
 from evals.runner import run_eval_file
 from tracing.store import SQLiteTraceStore
 
@@ -20,17 +21,20 @@ def run_harness(
     issue_report_path: str,
 ) -> dict:
     store = SQLiteTraceStore(db_path)
-    agent = DocsQAAgent(docs_dir=docs_dir, llm_client=RuleBasedLLMClient(), store=store)
+    resolved_docs_dir = resolve_demo_path(docs_dir)
+    resolved_cases_path = resolve_demo_path(cases_path)
+    resolved_issue_cases_path = resolve_demo_path(issue_cases_path)
+    agent = DocsQAAgent(docs_dir=resolved_docs_dir, llm_client=RuleBasedLLMClient(), store=store)
     qa_result = agent.answer(question)
     eval_summary = run_eval_file(
-        cases_path=cases_path,
-        docs_dir=docs_dir,
+        cases_path=resolved_cases_path,
+        docs_dir=resolved_docs_dir,
         db_path=db_path,
         report_path=report_path,
     )
     issue_eval_summary = run_eval_file(
-        cases_path=issue_cases_path,
-        docs_dir=docs_dir,
+        cases_path=resolved_issue_cases_path,
+        docs_dir=resolved_docs_dir,
         db_path=db_path,
         report_path=issue_report_path,
     )
@@ -58,7 +62,7 @@ def main() -> int:
         issue_report_path=args.issue_report_path,
     )
     print(json.dumps(result, indent=2, ensure_ascii=False))
-    return 1 if result["eval"]["failed"] else 0
+    return 1 if result["eval"]["failed"] or result["issue_triage_eval"]["failed"] else 0
 
 
 if __name__ == "__main__":

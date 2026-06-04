@@ -8,13 +8,14 @@ from typing import Any
 from agents.docs_qa_agent import DocsQAAgent
 from agents.issue_triage_agent import IssueTriageAgent
 from agents.llm import RuleBasedLLMClient
+from agents.paths import resolve_demo_path
 from evals.metrics import evaluate_docs_qa, evaluate_issue_triage
 from evals.report import write_markdown_report
 from tracing.store import SQLiteTraceStore
 
 
 def load_cases(cases_path: str | Path) -> list[dict[str, Any]]:
-    path = Path(cases_path)
+    path = resolve_demo_path(cases_path)
     cases = []
     for line_no, line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
         if not line.strip():
@@ -28,7 +29,8 @@ def load_cases(cases_path: str | Path) -> list[dict[str, Any]]:
 
 def run_eval_file(cases_path: str | Path, docs_dir: str | Path, db_path: str | Path, report_path: str | Path) -> dict[str, Any]:
     store = SQLiteTraceStore(db_path)
-    docs_agent = DocsQAAgent(docs_dir=docs_dir, llm_client=RuleBasedLLMClient(), store=store)
+    resolved_docs_dir = resolve_demo_path(docs_dir)
+    docs_agent = DocsQAAgent(docs_dir=resolved_docs_dir, llm_client=RuleBasedLLMClient(), store=store)
     issue_agent = IssueTriageAgent(store=store)
     results = []
 

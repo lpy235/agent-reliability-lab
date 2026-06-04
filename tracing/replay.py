@@ -7,6 +7,7 @@ from typing import Any
 
 from agents.docs_qa_agent import DocsQAAgent
 from agents.llm import RuleBasedLLMClient
+from agents.paths import resolve_demo_path
 from tracing.store import SQLiteTraceStore
 
 
@@ -30,7 +31,7 @@ def replay_run(
     store.init_schema()
     source_run = store.get_run(run_id)
     question = source_run["input"]["question"]
-    replay_docs_dir = docs_dir or source_run["input"].get("docs_dir", "sample_docs")
+    replay_docs_dir = resolve_demo_path(docs_dir or source_run["input"].get("docs_dir", "sample_docs"))
     source_steps = store.list_steps(run_id)
     chunks = extract_retrieved_chunks(source_steps) if fixed_context else None
 

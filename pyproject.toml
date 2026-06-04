@@ -1,0 +1,56 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agent-reliability-lab"
+version = "0.1.0"
+description = "Lightweight tracing, evals, replay, safety checks, and dashboard tooling for LLM agents."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [
+  { name = "lpy235" }
+]
+keywords = ["llm", "agents", "evaluation", "observability", "reliability"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Software Development :: Testing",
+]
+dependencies = [
+  "fastapi>=0.115,<1.0",
+  "uvicorn[standard]>=0.30,<1.0",
+  "requests>=2.31,<3.0",
+  "httpx>=0.27,<1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0,<9.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/lpy235/agent-reliability-lab"
+Repository = "https://github.com/lpy235/agent-reliability-lab"
+Issues = "https://github.com/lpy235/agent-reliability-lab/issues"
+
+[project.scripts]
+arl-api = "app.cli:main"
+arl-diff = "tracing.diff:main"
+arl-eval = "evals.runner:main"
+arl-harness = "harness:main"
+arl-replay = "tracing.replay:main"
+
+[tool.setuptools]
+packages = ["agents", "app", "evals", "safety", "sample_docs", "tracing"]
+py-modules = ["harness"]
+
+[tool.setuptools.package-data]
+app = ["web/*.html", "web/*.css", "web/*.js"]
+evals = ["cases/*.jsonl"]
+sample_docs = ["*.md"]
