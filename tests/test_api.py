@@ -21,6 +21,25 @@ def test_docs_qa_run_endpoint(tmp_path, monkeypatch):
     assert body["run_id"].startswith("run_")
 
 
+def test_issue_triage_run_endpoint(tmp_path, monkeypatch):
+    monkeypatch.setenv("AGENT_RELIABILITY_DB", str(tmp_path / "runs.db"))
+    client = TestClient(app)
+    response = client.post(
+        "/agents/issue-triage/run",
+        json={
+            "title": "App crashes when uploading large files",
+            "body": "The upload page freezes after selecting a 2GB file.",
+            "repo": {"name": "demo/app"},
+        },
+    )
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["label"] == "bug"
+    assert body["priority"] == "high"
+    assert body["tool_calls"][0]["name"] == "search_similar_issues"
+
+
 def test_run_inspection_endpoint(tmp_path, monkeypatch):
     monkeypatch.setenv("AGENT_RELIABILITY_DB", str(tmp_path / "runs.db"))
     client = TestClient(app)

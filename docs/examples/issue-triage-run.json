@@ -1,0 +1,22 @@
+{
+  "title": "App crashes when uploading large files",
+  "label": "bug",
+  "priority": "high",
+  "next_action": "dry_run_assign_label:bug",
+  "tool_calls": [
+    {
+      "name": "search_similar_issues",
+      "mode": "dry_run"
+    },
+    {
+      "name": "infer_owner",
+      "mode": "dry_run"
+    },
+    {
+      "name": "assign_label",
+      "mode": "dry_run"
+    }
+  ],
+  "latency_ms": 1,
+  "run_id": "run_example_issue_triage_001"
+}

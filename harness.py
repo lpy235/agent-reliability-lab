@@ -14,8 +14,10 @@ def run_harness(
     question: str,
     docs_dir: str,
     cases_path: str,
+    issue_cases_path: str,
     db_path: str,
     report_path: str,
+    issue_report_path: str,
 ) -> dict:
     store = SQLiteTraceStore(db_path)
     agent = DocsQAAgent(docs_dir=docs_dir, llm_client=RuleBasedLLMClient(), store=store)
@@ -26,7 +28,13 @@ def run_harness(
         db_path=db_path,
         report_path=report_path,
     )
-    return {"sample_run": qa_result, "eval": eval_summary}
+    issue_eval_summary = run_eval_file(
+        cases_path=issue_cases_path,
+        docs_dir=docs_dir,
+        db_path=db_path,
+        report_path=issue_report_path,
+    )
+    return {"sample_run": qa_result, "eval": eval_summary, "issue_triage_eval": issue_eval_summary}
 
 
 def main() -> int:
@@ -34,16 +42,20 @@ def main() -> int:
     parser.add_argument("--question", default="How do I configure the database?")
     parser.add_argument("--docs-dir", default="sample_docs")
     parser.add_argument("--cases-path", default="evals/cases/docs_qa.jsonl")
+    parser.add_argument("--issue-cases-path", default="evals/cases/issue_triage.jsonl")
     parser.add_argument("--db-path", default="runs.db")
     parser.add_argument("--report-path", default="reports/eval-report.md")
+    parser.add_argument("--issue-report-path", default="reports/issue-triage-report.md")
     args = parser.parse_args()
 
     result = run_harness(
         question=args.question,
         docs_dir=args.docs_dir,
         cases_path=args.cases_path,
+        issue_cases_path=args.issue_cases_path,
         db_path=args.db_path,
         report_path=args.report_path,
+        issue_report_path=args.issue_report_path,
     )
     print(json.dumps(result, indent=2, ensure_ascii=False))
     return 1 if result["eval"]["failed"] else 0

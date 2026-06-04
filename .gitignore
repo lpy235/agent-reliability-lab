@@ -4,5 +4,6 @@ __pycache__/
 .venv/
 runs.db
 reports/eval-report.md
+reports/issue-triage-report.md
 reports/run-diff.md
 .DS_Store

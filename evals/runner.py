@@ -6,8 +6,9 @@ from pathlib import Path
 from typing import Any
 
 from agents.docs_qa_agent import DocsQAAgent
+from agents.issue_triage_agent import IssueTriageAgent
 from agents.llm import RuleBasedLLMClient
-from evals.metrics import evaluate_docs_qa
+from evals.metrics import evaluate_docs_qa, evaluate_issue_triage
 from evals.report import write_markdown_report
 from tracing.store import SQLiteTraceStore
 
@@ -27,24 +28,33 @@ def load_cases(cases_path: str | Path) -> list[dict[str, Any]]:
 
 def run_eval_file(cases_path: str | Path, docs_dir: str | Path, db_path: str | Path, report_path: str | Path) -> dict[str, Any]:
     store = SQLiteTraceStore(db_path)
-    agent = DocsQAAgent(docs_dir=docs_dir, llm_client=RuleBasedLLMClient(), store=store)
+    docs_agent = DocsQAAgent(docs_dir=docs_dir, llm_client=RuleBasedLLMClient(), store=store)
+    issue_agent = IssueTriageAgent(store=store)
     results = []
 
     for case in load_cases(cases_path):
-        if case.get("agent") != "docs_qa":
-            raise ValueError(f"Unsupported agent for MVP: {case.get('agent')}")
-        output = agent.answer(case["input"]["question"])
-        evaluation = evaluate_docs_qa(output, case.get("expected", {}))
+        agent_name = case.get("agent")
+        if agent_name == "docs_qa":
+            output = docs_agent.answer(case["input"]["question"])
+            evaluation = evaluate_docs_qa(output, case.get("expected", {}))
+        elif agent_name == "issue_triage":
+            output = issue_agent.triage(
+                title=case["input"]["title"],
+                body=case["input"].get("body", ""),
+                repo=case["input"].get("repo", {}),
+            )
+            evaluation = evaluate_issue_triage(output, case.get("expected", {}))
+        else:
+            raise ValueError(f"Unsupported agent: {agent_name}")
         results.append(
             {
                 "case_id": case["case_id"],
-                "agent": case["agent"],
+                "agent": agent_name,
                 "run_id": output["run_id"],
                 "passed": evaluation["passed"],
                 "checks": evaluation["checks"],
                 "latency_ms": output["latency_ms"],
-                "answer": output["answer"],
-                "citations": output["citations"],
+                "output": output,
             }
         )
 

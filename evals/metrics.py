@@ -29,3 +29,28 @@ def evaluate_docs_qa(result: dict[str, Any], expected: dict[str, Any]) -> dict[s
         checks.append(_check("grounded", result.get("grounded") is expected["grounded"], result.get("grounded"), expected["grounded"]))
 
     return {"passed": all(check["passed"] for check in checks), "checks": checks}
+
+
+def evaluate_issue_triage(result: dict[str, Any], expected: dict[str, Any]) -> dict[str, Any]:
+    checks: list[dict[str, Any]] = []
+    tool_names = [tool.get("name") for tool in result.get("tool_calls", [])]
+
+    if "label" in expected:
+        checks.append(_check("label", result.get("label") == expected["label"], result.get("label"), expected["label"]))
+
+    if "priority" in expected:
+        checks.append(
+            _check("priority", result.get("priority") == expected["priority"], result.get("priority"), expected["priority"])
+        )
+
+    for tool_name in expected.get("required_tool_calls", []):
+        checks.append(_check(f"required_tool_call:{tool_name}", tool_name in tool_names, tool_names, tool_name))
+
+    for tool_name in expected.get("forbidden_tool_calls", []):
+        checks.append(_check(f"forbidden_tool_call:{tool_name}", tool_name not in tool_names, tool_names, tool_name))
+
+    if "max_latency_ms" in expected:
+        latency = result.get("latency_ms", 0)
+        checks.append(_check("max_latency_ms", latency <= expected["max_latency_ms"], latency, expected["max_latency_ms"]))
+
+    return {"passed": all(check["passed"] for check in checks), "checks": checks}

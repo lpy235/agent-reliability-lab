@@ -7,6 +7,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
 from agents.docs_qa_agent import DocsQAAgent
+from agents.issue_triage_agent import IssueTriageAgent
 from agents.llm import RuleBasedLLMClient
 from tracing.diff import diff_runs
 from tracing.replay import replay_run
@@ -19,6 +20,12 @@ app = FastAPI(title="Agent Reliability Lab")
 class DocsQARunRequest(BaseModel):
     question: str
     docs_dir: str = "sample_docs"
+
+
+class IssueTriageRunRequest(BaseModel):
+    title: str
+    body: str = ""
+    repo: dict = {}
 
 
 class ReplayRunRequest(BaseModel):
@@ -39,6 +46,12 @@ def health() -> dict[str, str]:
 def run_docs_qa(request: DocsQARunRequest) -> dict:
     agent = DocsQAAgent(docs_dir=request.docs_dir, llm_client=RuleBasedLLMClient(), store=get_store())
     return agent.answer(request.question)
+
+
+@app.post("/agents/issue-triage/run")
+def run_issue_triage(request: IssueTriageRunRequest) -> dict:
+    agent = IssueTriageAgent(store=get_store())
+    return agent.triage(title=request.title, body=request.body, repo=request.repo)
 
 
 @app.get("/runs")

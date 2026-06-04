@@ -18,6 +18,7 @@ LLM agents often change behavior when prompts, models, tools, or retrieval data 
 - Trace SDK for agent runs and intermediate steps
 - SQLite-backed run and step storage
 - Local-document Docs QA agent for RAG evaluation
+- Dry-run Issue Triage agent with simulated tool calls
 - JSONL regression test suite
 - Groundedness, citation, keyword, and latency checks
 - Markdown eval reports for prompt and model changes
@@ -32,10 +33,10 @@ LLM agents often change behavior when prompts, models, tools, or retrieval data 
 sample_docs/ + question
         |
         v
-DocsQAAgent
-  - retrieve local chunks
-  - build grounded prompt
-  - generate deterministic answer
+DocsQAAgent / IssueTriageAgent
+  - retrieve local chunks or analyze issue text
+  - build grounded prompt or simulate dry-run tool calls
+  - generate deterministic answer or triage decision
         |
         +--> Trace SDK --> SQLite runs.db
         |
@@ -49,6 +50,7 @@ DocsQAAgent
 Core modules:
 
 - `agents/`: retrieval, LLM clients, and Docs QA orchestration
+- `agents/issue_triage_agent.py`: deterministic issue triage and dry-run tool calls
 - `tracing/`: trace models, SDK, and SQLite persistence
 - `evals/`: JSONL case loading, metrics, report generation, and CLI runner
 - `app/`: FastAPI endpoints
@@ -88,6 +90,12 @@ Expected summary shape:
     "passed": 2,
     "failed": 0,
     "pass_rate": 1.0
+  },
+  "issue_triage_eval": {
+    "total": 3,
+    "passed": 3,
+    "failed": 0,
+    "pass_rate": 1.0
   }
 }
 ```
@@ -95,6 +103,7 @@ Expected summary shape:
 Static examples:
 
 - [Sample Docs QA run](docs/examples/sample-run.json)
+- [Sample issue triage run](docs/examples/issue-triage-run.json)
 - [Sample eval report](docs/examples/eval-report.md)
 - [Sample run diff](docs/examples/run-diff.md)
 - [GitHub Actions CI template](docs/examples/github-actions-ci.yml)
@@ -123,6 +132,14 @@ python -m evals.runner evals/cases/docs_qa.jsonl \
 ```
 
 The eval command exits with a nonzero status when any case fails, so it can be used in CI.
+
+Run the issue triage eval suite:
+
+```bash
+python -m evals.runner evals/cases/issue_triage.jsonl \
+  --db-path runs.db \
+  --report-path reports/issue-triage-report.md
+```
 
 ## Replay And Diff Runs
 
@@ -154,6 +171,9 @@ In another shell:
 curl -X POST http://127.0.0.1:8000/agents/docs-qa/run \
   -H "Content-Type: application/json" \
   -d '{"question":"How do I configure the database?","docs_dir":"sample_docs"}'
+curl -X POST http://127.0.0.1:8000/agents/issue-triage/run \
+  -H "Content-Type: application/json" \
+  -d '{"title":"App crashes when uploading large files","body":"The upload page freezes after selecting a 2GB file."}'
 ```
 
 Inspect saved runs:
@@ -175,13 +195,13 @@ This project is not a chat demo. It demonstrates reliability engineering for too
 - trace and observability primitives
 - regression testing for prompt and retrieval behavior
 - replay and diff workflows for saved agent behavior
+- dry-run tool-call reliability checks for issue triage
 - inspectable RAG groundedness checks
 - API and CLI surfaces over the same core agent logic
 
 ## Roadmap
 
 - Add a compact dashboard for trace timeline inspection
-- Add Issue Triage agent with simulated tool calls
 - Add safety checks for PII, forbidden tools, and approval-required tools
 - Add GitHub Actions report artifacts
 
@@ -191,6 +211,7 @@ This project is not a chat demo. It demonstrates reliability engineering for too
 - [MVP design spec](docs/superpowers/specs/2026-06-04-agent-reliability-lab-mvp-design.md)
 - [MVP implementation plan](docs/superpowers/plans/2026-06-04-agent-reliability-lab-mvp.md)
 - [GitHub presentation and CI plan](docs/superpowers/plans/2026-06-04-github-presentation-ci.md)
+- [Issue Triage Agent design](docs/superpowers/specs/2026-06-04-issue-triage-agent-design.md)
 
 ## Tech Stack
 

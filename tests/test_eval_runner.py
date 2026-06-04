@@ -66,6 +66,37 @@ def test_run_eval_file_writes_report(tmp_path):
     assert "docs_qa_001" in report_path.read_text(encoding="utf-8")
 
 
+def test_run_eval_file_supports_issue_triage(tmp_path):
+    cases_path = tmp_path / "issue_cases.jsonl"
+    report_path = tmp_path / "issue-report.md"
+    db_path = tmp_path / "runs.db"
+    cases_path.write_text(
+        json.dumps(
+            {
+                "case_id": "issue_bug_001",
+                "agent": "issue_triage",
+                "input": {
+                    "title": "App crashes when uploading large files",
+                    "body": "The upload page freezes after selecting a 2GB file.",
+                },
+                "expected": {
+                    "label": "bug",
+                    "priority": "high",
+                    "required_tool_calls": ["search_similar_issues", "assign_label"],
+                },
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    summary = run_eval_file(cases_path=cases_path, docs_dir="sample_docs", db_path=db_path, report_path=report_path)
+
+    assert summary["total"] == 1
+    assert summary["failed"] == 0
+    assert "issue_bug_001" in report_path.read_text(encoding="utf-8")
+
+
 def test_invalid_jsonl_reports_line_number(tmp_path):
     cases_path = tmp_path / "bad.jsonl"
     cases_path.write_text("{bad json}\n", encoding="utf-8")
