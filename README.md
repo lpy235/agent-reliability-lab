@@ -25,6 +25,7 @@ LLM agents often change behavior when prompts, models, tools, or retrieval data 
 - Markdown eval reports for prompt and model changes
 - Saved-run replay with fixed retrieved context
 - Run-to-run diff reports for answer, retrieval, steps, citations, and latency
+- Compact browser dashboard for run and trace inspection
 - FastAPI endpoints for manual run inspection
 - GitHub Actions CI template for tests and the MVP harness
 
@@ -45,7 +46,7 @@ DocsQAAgent / IssueTriageAgent
         |
         +--> Replay + Diff --> Markdown diff report
         |
-        +--> FastAPI endpoints for inspection
+        +--> Dashboard + FastAPI endpoints for inspection
 ```
 
 Core modules:
@@ -56,6 +57,7 @@ Core modules:
 - `safety/`: PII redaction and tool policy checks
 - `evals/`: JSONL case loading, metrics, report generation, and CLI runner
 - `app/`: FastAPI endpoints
+- `app/web/`: framework-free dashboard
 - `harness.py`: one-command MVP demo
 
 ## Quick Start
@@ -169,6 +171,12 @@ Replay is useful when you want to rerun the same input while controlling retriev
 uvicorn app.main:app --reload
 ```
 
+Open the dashboard:
+
+```text
+http://127.0.0.1:8000/dashboard
+```
+
 In another shell:
 
 ```bash
@@ -206,7 +214,6 @@ This project is not a chat demo. It demonstrates reliability engineering for too
 
 ## Roadmap
 
-- Add a compact dashboard for trace timeline inspection
 - Add GitHub Actions report artifacts
 
 ## Project Documents
@@ -216,6 +223,7 @@ This project is not a chat demo. It demonstrates reliability engineering for too
 - [MVP implementation plan](docs/superpowers/plans/2026-06-04-agent-reliability-lab-mvp.md)
 - [GitHub presentation and CI plan](docs/superpowers/plans/2026-06-04-github-presentation-ci.md)
 - [Issue Triage Agent design](docs/superpowers/specs/2026-06-04-issue-triage-agent-design.md)
+- [Dashboard design](docs/superpowers/specs/2026-06-04-dashboard-design.md)
 
 ## Tech Stack
 

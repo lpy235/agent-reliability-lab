@@ -10,6 +10,21 @@ def test_health_endpoint():
     assert response.json()["status"] == "ok"
 
 
+def test_dashboard_and_static_assets():
+    client = TestClient(app)
+
+    dashboard_response = client.get("/dashboard")
+    js_response = client.get("/static/app.js")
+    css_response = client.get("/static/styles.css")
+
+    assert dashboard_response.status_code == 200
+    assert "Agent Reliability Lab" in dashboard_response.text
+    assert js_response.status_code == 200
+    assert "loadRuns" in js_response.text
+    assert css_response.status_code == 200
+    assert ".layout" in css_response.text
+
+
 def test_docs_qa_run_endpoint(tmp_path, monkeypatch):
     monkeypatch.setenv("AGENT_RELIABILITY_DB", str(tmp_path / "runs.db"))
     client = TestClient(app)

@@ -4,6 +4,8 @@ import os
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from agents.docs_qa_agent import DocsQAAgent
@@ -15,6 +17,8 @@ from tracing.store import SQLiteTraceStore
 
 
 app = FastAPI(title="Agent Reliability Lab")
+WEB_DIR = Path(__file__).parent / "web"
+app.mount("/static", StaticFiles(directory=WEB_DIR), name="static")
 
 
 class DocsQARunRequest(BaseModel):
@@ -40,6 +44,11 @@ def get_store() -> SQLiteTraceStore:
 @app.get("/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}
+
+
+@app.get("/dashboard")
+def dashboard() -> FileResponse:
+    return FileResponse(WEB_DIR / "index.html")
 
 
 @app.post("/agents/docs-qa/run")
