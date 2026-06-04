@@ -8,6 +8,8 @@ from pydantic import BaseModel
 
 from agents.docs_qa_agent import DocsQAAgent
 from agents.llm import RuleBasedLLMClient
+from tracing.diff import diff_runs
+from tracing.replay import replay_run
 from tracing.store import SQLiteTraceStore
 
 
@@ -17,6 +19,11 @@ app = FastAPI(title="Agent Reliability Lab")
 class DocsQARunRequest(BaseModel):
     question: str
     docs_dir: str = "sample_docs"
+
+
+class ReplayRunRequest(BaseModel):
+    fixed_context: bool = True
+    docs_dir: str | None = None
 
 
 def get_store() -> SQLiteTraceStore:
@@ -39,6 +46,27 @@ def list_runs(limit: int = 50) -> dict:
     store = get_store()
     store.init_schema()
     return {"runs": store.list_runs(limit=limit)}
+
+
+@app.get("/runs/diff")
+def diff_saved_runs(base_run_id: str, candidate_run_id: str) -> dict:
+    try:
+        return diff_runs(base_run_id=base_run_id, candidate_run_id=candidate_run_id, db_path=get_store().db_path)
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+
+@app.post("/runs/{run_id}/replay")
+def replay_saved_run(run_id: str, request: ReplayRunRequest) -> dict:
+    try:
+        return replay_run(
+            run_id=run_id,
+            db_path=get_store().db_path,
+            fixed_context=request.fixed_context,
+            docs_dir=request.docs_dir,
+        )
+    except (KeyError, ValueError) as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
 
 
 @app.get("/runs/{run_id}")

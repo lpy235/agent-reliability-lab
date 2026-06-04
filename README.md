@@ -21,6 +21,8 @@ LLM agents often change behavior when prompts, models, tools, or retrieval data 
 - JSONL regression test suite
 - Groundedness, citation, keyword, and latency checks
 - Markdown eval reports for prompt and model changes
+- Saved-run replay with fixed retrieved context
+- Run-to-run diff reports for answer, retrieval, steps, citations, and latency
 - FastAPI endpoints for manual run inspection
 - GitHub Actions CI template for tests and the MVP harness
 
@@ -38,6 +40,8 @@ DocsQAAgent
         +--> Trace SDK --> SQLite runs.db
         |
         +--> JSONL eval runner --> Markdown report
+        |
+        +--> Replay + Diff --> Markdown diff report
         |
         +--> FastAPI endpoints for inspection
 ```
@@ -92,6 +96,7 @@ Static examples:
 
 - [Sample Docs QA run](docs/examples/sample-run.json)
 - [Sample eval report](docs/examples/eval-report.md)
+- [Sample run diff](docs/examples/run-diff.md)
 - [GitHub Actions CI template](docs/examples/github-actions-ci.yml)
 
 ## Enable GitHub Actions
@@ -119,6 +124,24 @@ python -m evals.runner evals/cases/docs_qa.jsonl \
 
 The eval command exits with a nonzero status when any case fails, so it can be used in CI.
 
+## Replay And Diff Runs
+
+Replay a saved run with its original retrieved chunks:
+
+```bash
+python -m tracing.replay <run_id> --db-path runs.db
+```
+
+Compare two saved runs and write a Markdown report:
+
+```bash
+python -m tracing.diff <base_run_id> <candidate_run_id> \
+  --db-path runs.db \
+  --report-path reports/run-diff.md
+```
+
+Replay is useful when you want to rerun the same input while controlling retrieval context. Diff is useful when a prompt, model, or docs change and you need to see which behavior actually moved.
+
 ## Run Docs QA Through The API
 
 ```bash
@@ -138,6 +161,10 @@ Inspect saved runs:
 ```bash
 curl http://127.0.0.1:8000/runs
 curl http://127.0.0.1:8000/runs/<run_id>
+curl -X POST http://127.0.0.1:8000/runs/<run_id>/replay \
+  -H "Content-Type: application/json" \
+  -d '{"fixed_context":true}'
+curl "http://127.0.0.1:8000/runs/diff?base_run_id=<run_id>&candidate_run_id=<run_id>"
 ```
 
 ## What This Demonstrates
@@ -147,13 +174,12 @@ This project is not a chat demo. It demonstrates reliability engineering for too
 - evaluation harness design
 - trace and observability primitives
 - regression testing for prompt and retrieval behavior
+- replay and diff workflows for saved agent behavior
 - inspectable RAG groundedness checks
 - API and CLI surfaces over the same core agent logic
 
 ## Roadmap
 
-- Replay saved runs with fixed inputs and retrieved context
-- Diff two runs across output, retrieval, tool calls, latency, and eval status
 - Add a compact dashboard for trace timeline inspection
 - Add Issue Triage agent with simulated tool calls
 - Add safety checks for PII, forbidden tools, and approval-required tools

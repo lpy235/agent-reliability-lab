@@ -32,3 +32,28 @@ def test_run_inspection_endpoint(tmp_path, monkeypatch):
     assert inspect_response.status_code == 200
     assert inspect_response.json()["run"]["run_id"] == run_id
     assert len(inspect_response.json()["steps"]) == 2
+
+
+def test_replay_and_diff_endpoints(tmp_path, monkeypatch):
+    monkeypatch.setenv("AGENT_RELIABILITY_DB", str(tmp_path / "runs.db"))
+    client = TestClient(app)
+    run_response = client.post("/agents/docs-qa/run", json={"question": "How do I configure the database?", "docs_dir": "sample_docs"})
+    run_id = run_response.json()["run_id"]
+
+    replay_response = client.post(f"/runs/{run_id}/replay", json={"fixed_context": True})
+
+    assert replay_response.status_code == 200
+    replay_body = replay_response.json()
+    assert replay_body["source_run_id"] == run_id
+    assert replay_body["fixed_context"] is True
+
+    diff_response = client.get(
+        "/runs/diff",
+        params={"base_run_id": run_id, "candidate_run_id": replay_body["replay_run_id"]},
+    )
+
+    assert diff_response.status_code == 200
+    diff_body = diff_response.json()
+    assert diff_body["base_run_id"] == run_id
+    assert diff_body["candidate_run_id"] == replay_body["replay_run_id"]
+    assert "comparisons" in diff_body

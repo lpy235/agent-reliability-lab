@@ -16,15 +16,31 @@ class DocsQAAgent:
         self.llm_client = llm_client or RuleBasedLLMClient()
         self.store = store or SQLiteTraceStore("runs.db")
 
-    def answer(self, question: str) -> dict[str, Any]:
+    def answer(
+        self,
+        question: str,
+        retrieved_chunks: list[dict[str, Any]] | None = None,
+        source_run_id: str | None = None,
+    ) -> dict[str, Any]:
         started = time.perf_counter()
-        trace = Trace.start(store=self.store, agent_name="docs_qa", input={"question": question, "docs_dir": self.docs_dir})
+        trace_input: dict[str, Any] = {"question": question, "docs_dir": self.docs_dir}
+        if source_run_id is not None:
+            trace_input["source_run_id"] = source_run_id
+            trace_input["fixed_context"] = retrieved_chunks is not None
+        trace = Trace.start(store=self.store, agent_name="docs_qa", input=trace_input)
         try:
             with trace.step("retrieve_docs") as step:
                 step.log_state(before={"question": question})
-                chunks = retrieve_chunks(question, docs_dir=self.docs_dir, top_k=3)
-                step.log_event({"type": "retrieval", "chunks": chunks})
-                step.log_decision({"next_action": "generate_answer", "reason_tags": ["chunks_found"]})
+                if retrieved_chunks is None:
+                    chunks = retrieve_chunks(question, docs_dir=self.docs_dir, top_k=3)
+                    event_type = "retrieval"
+                    reason_tags = ["chunks_found"]
+                else:
+                    chunks = retrieved_chunks
+                    event_type = "replay_retrieval"
+                    reason_tags = ["fixed_context", "chunks_reused"]
+                step.log_event({"type": event_type, "chunks": chunks})
+                step.log_decision({"next_action": "generate_answer", "reason_tags": reason_tags})
                 step.log_state(after={"chunk_count": len(chunks)})
 
             prompt = self._build_prompt(question, chunks)
@@ -49,6 +65,9 @@ class DocsQAAgent:
                 "latency_ms": latency_ms,
                 "run_id": trace.run_id,
             }
+            if source_run_id is not None:
+                result["source_run_id"] = source_run_id
+                result["fixed_context"] = retrieved_chunks is not None
             trace.finish(output=result, status="success", metrics={"latency_ms": latency_ms, "tokens": response.tokens})
             return result
         except Exception as exc:
