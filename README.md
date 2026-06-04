@@ -30,7 +30,10 @@ This repository is currently in the design and MVP planning stage. The first imp
 - pytest
 - OpenAI-compatible LLM API
 
+## License
+
+MIT License.
+
 ## Scope
 
 The MVP focuses on agent reliability engineering: tracing, RAG evaluation, regression testing, and inspectable reports. It intentionally avoids private user-memory systems, proactive companion behavior, or unrelated personal-agent product concepts.
-
