@@ -1,0 +1,35 @@
+{
+  "question": "How do I configure the database?",
+  "answer": "Set `DATABASE_URL` in the environment before starting the service.",
+  "citations": [
+    {
+      "source": "sample_docs/config.md",
+      "chunk_id": "config.md#1"
+    },
+    {
+      "source": "sample_docs/config.md",
+      "chunk_id": "config.md#2"
+    }
+  ],
+  "retrieved_chunks": [
+    {
+      "chunk_id": "config.md#1",
+      "source": "sample_docs/config.md",
+      "text": "Set `DATABASE_URL` in the environment before starting the service. The value should be a SQLite path for local demos or a Postgres URL in production."
+    },
+    {
+      "chunk_id": "config.md#2",
+      "source": "sample_docs/config.md",
+      "text": "Set `OPENAI_API_KEY` only when you want to use a real OpenAI-compatible model. Without it, the demo uses the deterministic local client."
+    },
+    {
+      "chunk_id": "deployment.md#1",
+      "source": "sample_docs/deployment.md",
+      "text": "Run the API with `uvicorn app.main:app --reload`. The eval runner can be executed separately and writes a Markdown report under `reports/`."
+    }
+  ],
+  "grounded": true,
+  "latency_ms": 5,
+  "run_id": "run_example_docs_qa_001"
+}
+
