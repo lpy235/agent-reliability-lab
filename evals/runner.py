@@ -10,7 +10,7 @@ from agents.issue_triage_agent import IssueTriageAgent
 from agents.llm import RuleBasedLLMClient
 from agents.paths import resolve_demo_path
 from evals.metrics import evaluate_docs_qa, evaluate_issue_triage
-from evals.report import write_markdown_report
+from evals.report import write_json_report, write_markdown_report
 from tracing.store import SQLiteTraceStore
 
 
@@ -27,7 +27,13 @@ def load_cases(cases_path: str | Path) -> list[dict[str, Any]]:
     return cases
 
 
-def run_eval_file(cases_path: str | Path, docs_dir: str | Path, db_path: str | Path, report_path: str | Path) -> dict[str, Any]:
+def run_eval_file(
+    cases_path: str | Path,
+    docs_dir: str | Path,
+    db_path: str | Path,
+    report_path: str | Path,
+    json_report_path: str | Path | None = None,
+) -> dict[str, Any]:
     store = SQLiteTraceStore(db_path)
     resolved_docs_dir = resolve_demo_path(docs_dir)
     docs_agent = DocsQAAgent(docs_dir=resolved_docs_dir, llm_client=RuleBasedLLMClient(), store=store)
@@ -60,7 +66,10 @@ def run_eval_file(cases_path: str | Path, docs_dir: str | Path, db_path: str | P
             }
         )
 
-    return write_markdown_report(results, report_path)
+    summary = write_markdown_report(results, report_path)
+    if json_report_path is not None:
+        summary.update(write_json_report(results, json_report_path))
+    return summary
 
 
 def main() -> int:
@@ -69,9 +78,10 @@ def main() -> int:
     parser.add_argument("--docs-dir", default="sample_docs")
     parser.add_argument("--db-path", default="runs.db")
     parser.add_argument("--report-path", default="reports/eval-report.md")
+    parser.add_argument("--json-report-path")
     args = parser.parse_args()
 
-    summary = run_eval_file(args.cases_path, args.docs_dir, args.db_path, args.report_path)
+    summary = run_eval_file(args.cases_path, args.docs_dir, args.db_path, args.report_path, args.json_report_path)
     print(f"Eval complete: {summary['passed']}/{summary['total']} passed. Report: {summary['report_path']}")
     return 1 if summary["failed"] else 0
 

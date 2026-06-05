@@ -9,4 +9,6 @@ runs.db
 reports/eval-report.md
 reports/issue-triage-report.md
 reports/run-diff.md
+reports/*.json
+reports/baseline-comparison.md
 .DS_Store

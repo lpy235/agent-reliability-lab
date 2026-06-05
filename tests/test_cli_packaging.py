@@ -14,6 +14,7 @@ def test_pyproject_defines_console_scripts():
     assert metadata["project"]["name"] == "agent-reliability-lab"
     assert metadata["project"]["scripts"] == {
         "arl-api": "app.cli:main",
+        "arl-baseline": "evals.baseline:main",
         "arl-diff": "tracing.diff:main",
         "arl-eval": "evals.runner:main",
         "arl-harness": "harness:main",

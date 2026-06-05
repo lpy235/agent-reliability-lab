@@ -45,6 +45,7 @@ def test_evaluate_docs_qa_fails_missing_keyword():
 def test_run_eval_file_writes_report(tmp_path):
     cases_path = tmp_path / "cases.jsonl"
     report_path = tmp_path / "report.md"
+    json_report_path = tmp_path / "report.json"
     db_path = tmp_path / "runs.db"
     cases_path.write_text(
         json.dumps(
@@ -59,11 +60,21 @@ def test_run_eval_file_writes_report(tmp_path):
         encoding="utf-8",
     )
 
-    summary = run_eval_file(cases_path=cases_path, docs_dir="sample_docs", db_path=db_path, report_path=report_path)
+    summary = run_eval_file(
+        cases_path=cases_path,
+        docs_dir="sample_docs",
+        db_path=db_path,
+        report_path=report_path,
+        json_report_path=json_report_path,
+    )
 
     assert summary["total"] == 1
     assert summary["failed"] == 0
+    assert summary["json_report_path"] == str(json_report_path)
     assert "docs_qa_001" in report_path.read_text(encoding="utf-8")
+    json_report = json.loads(json_report_path.read_text(encoding="utf-8"))
+    assert json_report["summary"]["passed"] == 1
+    assert json_report["results"][0]["case_id"] == "docs_qa_001"
 
 
 def test_run_eval_file_supports_issue_triage(tmp_path):

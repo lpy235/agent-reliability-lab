@@ -41,6 +41,7 @@ Issues = "https://github.com/lpy235/agent-reliability-lab/issues"
 
 [project.scripts]
 arl-api = "app.cli:main"
+arl-baseline = "evals.baseline:main"
 arl-diff = "tracing.diff:main"
 arl-eval = "evals.runner:main"
 arl-harness = "harness:main"

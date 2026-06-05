@@ -1,15 +1,21 @@
 from __future__ import annotations
 
+import json
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 
-def write_markdown_report(results: list[dict[str, Any]], report_path: str | Path) -> dict[str, Any]:
+def summarize_results(results: list[dict[str, Any]]) -> dict[str, Any]:
     total = len(results)
     failed = sum(1 for result in results if not result["passed"])
     passed = total - failed
     pass_rate = 0.0 if total == 0 else passed / total
+    return {"total": total, "passed": passed, "failed": failed, "pass_rate": pass_rate}
+
+
+def write_markdown_report(results: list[dict[str, Any]], report_path: str | Path) -> dict[str, Any]:
+    summary = summarize_results(results)
     path = Path(report_path)
     path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -18,10 +24,10 @@ def write_markdown_report(results: list[dict[str, Any]], report_path: str | Path
         "",
         f"Generated: {datetime.now(timezone.utc).isoformat()}",
         "",
-        f"Total: {total}",
-        f"Passed: {passed}",
-        f"Failed: {failed}",
-        f"Pass rate: {pass_rate:.1%}",
+        f"Total: {summary['total']}",
+        f"Passed: {summary['passed']}",
+        f"Failed: {summary['failed']}",
+        f"Pass rate: {summary['pass_rate']:.1%}",
         "",
         "| Case | Status | Run ID | Latency |",
         "| --- | --- | --- | ---: |",
@@ -41,4 +47,16 @@ def write_markdown_report(results: list[dict[str, Any]], report_path: str | Path
             lines.append("")
 
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
-    return {"total": total, "passed": passed, "failed": failed, "pass_rate": pass_rate, "report_path": str(path)}
+    return {**summary, "report_path": str(path)}
+
+
+def write_json_report(results: list[dict[str, Any]], report_path: str | Path) -> dict[str, Any]:
+    path = Path(report_path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    payload = {
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "summary": summarize_results(results),
+        "results": results,
+    }
+    path.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    return {"json_report_path": str(path)}

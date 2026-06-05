@@ -19,6 +19,8 @@ def run_harness(
     db_path: str,
     report_path: str,
     issue_report_path: str,
+    json_report_path: str | None = None,
+    issue_json_report_path: str | None = None,
 ) -> dict:
     store = SQLiteTraceStore(db_path)
     resolved_docs_dir = resolve_demo_path(docs_dir)
@@ -31,12 +33,14 @@ def run_harness(
         docs_dir=resolved_docs_dir,
         db_path=db_path,
         report_path=report_path,
+        json_report_path=json_report_path,
     )
     issue_eval_summary = run_eval_file(
         cases_path=resolved_issue_cases_path,
         docs_dir=resolved_docs_dir,
         db_path=db_path,
         report_path=issue_report_path,
+        json_report_path=issue_json_report_path,
     )
     return {"sample_run": qa_result, "eval": eval_summary, "issue_triage_eval": issue_eval_summary}
 
@@ -50,6 +54,8 @@ def main() -> int:
     parser.add_argument("--db-path", default="runs.db")
     parser.add_argument("--report-path", default="reports/eval-report.md")
     parser.add_argument("--issue-report-path", default="reports/issue-triage-report.md")
+    parser.add_argument("--json-report-path", default="reports/eval-report.json")
+    parser.add_argument("--issue-json-report-path", default="reports/issue-triage-report.json")
     args = parser.parse_args()
 
     result = run_harness(
@@ -60,6 +66,8 @@ def main() -> int:
         db_path=args.db_path,
         report_path=args.report_path,
         issue_report_path=args.issue_report_path,
+        json_report_path=args.json_report_path,
+        issue_json_report_path=args.issue_json_report_path,
     )
     print(json.dumps(result, indent=2, ensure_ascii=False))
     return 1 if result["eval"]["failed"] or result["issue_triage_eval"]["failed"] else 0

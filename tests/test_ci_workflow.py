@@ -18,7 +18,7 @@ def test_ci_uploads_harness_artifacts():
             "uses": "actions/upload-artifact@v4",
             "with": {
                 "name": "agent-reliability-lab-reports",
-                "path": "reports/*.md\nruns.db\n",
+                "path": "reports/*.md\nreports/*.json\nruns.db\n",
                 "if-no-files-found": "warn",
                 "retention-days": 14,
             },

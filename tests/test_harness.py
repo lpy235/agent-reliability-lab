@@ -10,10 +10,14 @@ def test_harness_runs_sample_question_and_eval(tmp_path):
         db_path=str(tmp_path / "runs.db"),
         report_path=str(tmp_path / "eval-report.md"),
         issue_report_path=str(tmp_path / "issue-report.md"),
+        json_report_path=str(tmp_path / "eval-report.json"),
+        issue_json_report_path=str(tmp_path / "issue-report.json"),
     )
 
     assert "DATABASE_URL" in result["sample_run"]["answer"]
     assert result["eval"]["total"] == 2
     assert result["eval"]["failed"] == 0
+    assert result["eval"]["json_report_path"].endswith("eval-report.json")
     assert result["issue_triage_eval"]["total"] == 3
     assert result["issue_triage_eval"]["failed"] == 0
+    assert result["issue_triage_eval"]["json_report_path"].endswith("issue-report.json")

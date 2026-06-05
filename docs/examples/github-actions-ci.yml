@@ -37,6 +37,7 @@ jobs:
           name: agent-reliability-lab-reports
           path: |
             reports/*.md
+            reports/*.json
             runs.db
           if-no-files-found: warn
           retention-days: 14

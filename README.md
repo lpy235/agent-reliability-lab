@@ -27,6 +27,7 @@ LLM agents often change behavior when prompts, models, tools, or retrieval data 
 - Groundedness, citation, keyword, and latency checks
 - PII redaction and dry-run tool policy checks
 - Markdown eval reports for prompt and model changes
+- JSON eval reports and baseline comparison for regression tracking
 - Saved-run replay with fixed retrieved context
 - Run-to-run diff reports for answer, retrieval, steps, citations, and latency
 - Compact browser dashboard for run and trace inspection
@@ -46,7 +47,7 @@ DocsQAAgent / IssueTriageAgent
         |
         +--> Trace SDK --> SQLite runs.db
         |
-        +--> JSONL eval runner --> Markdown report
+        +--> JSONL eval runner --> Markdown + JSON reports
         |
         +--> Replay + Diff --> Markdown diff report
         |
@@ -74,7 +75,7 @@ python -m pytest -v
 arl-harness
 ```
 
-The harness runs one sample Docs QA question, executes the JSONL eval suite, stores traces in `runs.db`, and writes a Markdown report to `reports/eval-report.md`.
+The harness runs one sample Docs QA question, executes the JSONL eval suite, stores traces in `runs.db`, and writes Markdown plus JSON reports under `reports/`.
 
 ## Quick Demo
 
@@ -126,7 +127,7 @@ arl-harness
 ```
 
 The reusable workflow template is also kept at [docs/examples/github-actions-ci.yml](docs/examples/github-actions-ci.yml).
-CI uploads the generated Markdown eval reports and `runs.db` as the `agent-reliability-lab-reports` artifact for each run.
+CI uploads the generated Markdown reports, JSON reports, and `runs.db` as the `agent-reliability-lab-reports` artifact for each run.
 
 ## Run JSONL Evals
 
@@ -134,7 +135,8 @@ CI uploads the generated Markdown eval reports and `runs.db` as the `agent-relia
 arl-eval evals/cases/docs_qa.jsonl \
   --docs-dir sample_docs \
   --db-path runs.db \
-  --report-path reports/eval-report.md
+  --report-path reports/eval-report.md \
+  --json-report-path reports/eval-report.json
 ```
 
 The eval command exits with a nonzero status when any case fails, so it can be used in CI.
@@ -144,10 +146,22 @@ Run the issue triage eval suite:
 ```bash
 arl-eval evals/cases/issue_triage.jsonl \
   --db-path runs.db \
-  --report-path reports/issue-triage-report.md
+  --report-path reports/issue-triage-report.md \
+  --json-report-path reports/issue-triage-report.json
 ```
 
 Issue triage evals can assert required tool calls, forbidden tool calls, PII redaction, approval-required tools, and maximum safety violations.
+
+## Compare Eval Baselines
+
+Compare two JSON eval reports:
+
+```bash
+arl-baseline reports/baseline-eval-report.json reports/eval-report.json \
+  --report-path reports/baseline-comparison.md
+```
+
+The command exits with a nonzero status when a previously passing shared case regresses.
 
 ## Replay And Diff Runs
 
@@ -218,6 +232,7 @@ This project is not a chat demo. It demonstrates reliability engineering for too
 
 - `arl-harness`: run the local demo, Docs QA evals, and issue triage evals.
 - `arl-eval`: run a JSONL eval file and write a Markdown report.
+- `arl-baseline`: compare two JSON eval reports and flag regressions.
 - `arl-replay`: replay a saved Docs QA run with fixed or live retrieval context.
 - `arl-diff`: compare two saved runs and optionally write a Markdown diff report.
 - `arl-api`: start the FastAPI app and browser dashboard.
