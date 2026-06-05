@@ -30,3 +30,14 @@ jobs:
 
       - name: Run MVP harness
         run: arl-harness
+
+      - name: Upload reliability artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: agent-reliability-lab-reports
+          path: |
+            reports/*.md
+            runs.db
+          if-no-files-found: warn
+          retention-days: 14

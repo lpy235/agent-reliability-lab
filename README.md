@@ -126,6 +126,7 @@ arl-harness
 ```
 
 The reusable workflow template is also kept at [docs/examples/github-actions-ci.yml](docs/examples/github-actions-ci.yml).
+CI uploads the generated Markdown eval reports and `runs.db` as the `agent-reliability-lab-reports` artifact for each run.
 
 ## Run JSONL Evals
 
