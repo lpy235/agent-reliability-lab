@@ -224,6 +224,8 @@ This project is not a chat demo. It demonstrates reliability engineering for too
 ## Project Documents
 
 - [Project overview](Agent_Reliability_Lab_项目说明.md)
+- [Changelog](CHANGELOG.md)
+- [v0.1.0 release notes](docs/releases/v0.1.0.md)
 - [MVP design spec](docs/superpowers/specs/2026-06-04-agent-reliability-lab-mvp-design.md)
 - [MVP implementation plan](docs/superpowers/plans/2026-06-04-agent-reliability-lab-mvp.md)
 - [GitHub presentation and CI plan](docs/superpowers/plans/2026-06-04-github-presentation-ci.md)
