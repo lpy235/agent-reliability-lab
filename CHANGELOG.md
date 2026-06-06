@@ -4,6 +4,10 @@ All notable changes to Agent Reliability Lab are documented in this file.
 
 ## Unreleased
 
+No unreleased changes.
+
+## v0.2.0 - 2026-06-06
+
 ### Added
 
 - GitHub Actions artifact upload for Markdown eval reports and `runs.db`.
