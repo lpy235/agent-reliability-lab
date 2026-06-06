@@ -1,5 +1,6 @@
 const state = {
   activeView: "runs",
+  selectedBaselineKey: null,
   selectedRunId: null,
   runs: [],
   reports: null,
@@ -69,7 +70,8 @@ function renderReports() {
   if (!state.reports) return;
   el("reports-dir").textContent = state.reports.reports_dir || "reports";
   renderEvalReports(state.reports.evals || []);
-  renderBaseline(state.reports.baseline || {});
+  renderBaselineSelector(state.reports.baselines || []);
+  renderBaseline(selectedBaseline(state.reports.baselines || []));
 }
 
 function renderEvalReports(reports) {
@@ -125,6 +127,38 @@ function renderBaseline(baseline) {
   el("baseline-changes").innerHTML = changes.length
     ? changes.join("")
     : `<div class="empty-state">${baseline.available ? "No baseline changes detected." : "Generate baseline-comparison.json to see changes."}</div>`;
+}
+
+function renderBaselineSelector(baselines) {
+  const selector = el("baseline-selector");
+  selector.innerHTML = "";
+  if (!baselines.length) {
+    state.selectedBaselineKey = null;
+    return;
+  }
+  if (!state.selectedBaselineKey || !baselines.some((baseline) => baseline.key === state.selectedBaselineKey)) {
+    const firstAvailable = baselines.find((baseline) => baseline.available);
+    state.selectedBaselineKey = (firstAvailable || baselines[0]).key;
+  }
+  for (const baseline of baselines) {
+    const button = document.createElement("button");
+    const summary = baseline.summary || {};
+    button.type = "button";
+    button.className = `selector-button${baseline.key === state.selectedBaselineKey ? " active" : ""}`;
+    button.innerHTML = `
+      <strong>${baseline.label}</strong>
+      <span>${baseline.available ? `${summary.regressions ?? 0} regressions` : "Unavailable"}</span>
+    `;
+    button.addEventListener("click", () => {
+      state.selectedBaselineKey = baseline.key;
+      renderReports();
+    });
+    selector.appendChild(button);
+  }
+}
+
+function selectedBaseline(baselines) {
+  return baselines.find((baseline) => baseline.key === state.selectedBaselineKey) || baselines[0] || {};
 }
 
 async function selectRun(runId) {

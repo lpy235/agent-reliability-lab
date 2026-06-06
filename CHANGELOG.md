@@ -8,6 +8,7 @@ All notable changes to Agent Reliability Lab are documented in this file.
 
 - `arl-dashboard` CLI for opening saved CI artifacts with explicit `runs.db` and reports paths.
 - Issue Triage baseline gate in CI using `baselines/issue_triage_eval_report.json`.
+- Dashboard baseline selector for switching between Docs QA and Issue Triage comparisons.
 - README instructions for inspecting `agent-reliability-lab-reports` artifacts locally.
 
 ## v0.2.0 - 2026-06-06

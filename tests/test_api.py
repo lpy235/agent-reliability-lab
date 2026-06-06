@@ -21,10 +21,13 @@ def test_dashboard_and_static_assets():
 
     assert dashboard_response.status_code == 200
     assert "Agent Reliability Lab" in dashboard_response.text
+    assert "baseline-selector" in dashboard_response.text
     assert js_response.status_code == 200
     assert "loadRuns" in js_response.text
+    assert "selectedBaselineKey" in js_response.text
     assert css_response.status_code == 200
     assert ".layout" in css_response.text
+    assert ".selector-button" in css_response.text
 
 
 def test_docs_qa_run_endpoint(tmp_path, monkeypatch):
@@ -106,6 +109,7 @@ def test_reports_endpoint_handles_missing_files(tmp_path, monkeypatch):
     assert body["evals"][0]["available"] is False
     assert body["evals"][1]["available"] is False
     assert body["baseline"]["available"] is False
+    assert [baseline["available"] for baseline in body["baselines"]] == [False, False]
 
 
 def test_reports_endpoint_reads_eval_and_baseline_json(tmp_path, monkeypatch):
@@ -176,6 +180,29 @@ def test_reports_endpoint_reads_eval_and_baseline_json(tmp_path, monkeypatch):
         ),
         encoding="utf-8",
     )
+    (reports_dir / "issue-triage-baseline-comparison.json").write_text(
+        json.dumps(
+            {
+                "baseline_path": "baselines/issue_triage_eval_report.json",
+                "candidate_path": "reports/issue-triage-report.json",
+                "summary": {
+                    "baseline_total": 1,
+                    "candidate_total": 1,
+                    "shared": 1,
+                    "regressions": 0,
+                    "improvements": 1,
+                    "added": 0,
+                    "removed": 0,
+                },
+                "regressions": [],
+                "improvements": [{"case_id": "issue_crash"}],
+                "unchanged": [],
+                "added": [],
+                "removed": [],
+            }
+        ),
+        encoding="utf-8",
+    )
     client = TestClient(app)
 
     response = client.get("/reports/evals")
@@ -186,3 +213,5 @@ def test_reports_endpoint_reads_eval_and_baseline_json(tmp_path, monkeypatch):
     assert body["evals"][0]["results"][0]["failed_checks"] == ["required_keyword:DATABASE_URL"]
     assert body["evals"][1]["summary"]["pass_rate"] == 1.0
     assert body["baseline"]["summary"]["regressions"] == 1
+    assert [baseline["label"] for baseline in body["baselines"]] == ["Docs QA", "Issue Triage"]
+    assert body["baselines"][1]["summary"]["improvements"] == 1

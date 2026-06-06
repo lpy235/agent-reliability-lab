@@ -27,6 +27,11 @@ EVAL_REPORTS = [
     ("issue_triage", "Issue Triage", "issue-triage-report.json"),
 ]
 
+BASELINE_REPORTS = [
+    ("docs_qa", "Docs QA", "baseline-comparison.json"),
+    ("issue_triage", "Issue Triage", "issue-triage-baseline-comparison.json"),
+]
+
 
 class DocsQARunRequest(BaseModel):
     question: str
@@ -84,13 +89,18 @@ def list_runs(limit: int = 50) -> dict:
 @app.get("/reports/evals")
 def list_eval_reports() -> dict:
     reports_dir = get_reports_dir()
+    baselines = [
+        _load_baseline_report(reports_dir / filename, key=key, label=label)
+        for key, label, filename in BASELINE_REPORTS
+    ]
     return {
         "reports_dir": str(reports_dir),
         "evals": [
             _load_eval_report(reports_dir / filename, key=key, label=label)
             for key, label, filename in EVAL_REPORTS
         ],
-        "baseline": _load_baseline_report(reports_dir / "baseline-comparison.json"),
+        "baselines": baselines,
+        "baseline": baselines[0],
     }
 
 
@@ -143,10 +153,12 @@ def _load_eval_report(path: Path, key: str, label: str) -> dict[str, Any]:
     }
 
 
-def _load_baseline_report(path: Path) -> dict[str, Any]:
+def _load_baseline_report(path: Path, key: str = "docs_qa", label: str = "Docs QA") -> dict[str, Any]:
     payload = _read_json_file(path)
     if payload is None:
         return {
+            "key": key,
+            "label": label,
             "path": str(path),
             "available": False,
             "summary": {
@@ -165,6 +177,8 @@ def _load_baseline_report(path: Path) -> dict[str, Any]:
         }
 
     return {
+        "key": key,
+        "label": label,
         "path": str(path),
         "available": True,
         "baseline_path": payload.get("baseline_path"),

@@ -212,6 +212,38 @@ input[type="text"] {
   min-width: 0;
 }
 
+.selector-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  padding: 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.selector-button {
+  display: block;
+  min-height: 54px;
+  background: #fff;
+  color: var(--text);
+  text-align: left;
+}
+
+.selector-button.active {
+  border-color: var(--accent);
+  background: var(--accent-quiet);
+}
+
+.selector-button strong,
+.selector-button span {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.selector-button span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
 .report-card-header {
   display: flex;
   align-items: flex-start;

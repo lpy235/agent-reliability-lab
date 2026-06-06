@@ -147,7 +147,7 @@ Open:
 http://127.0.0.1:8000/dashboard
 ```
 
-Use the Runs view for trace inspection and the Reports view for eval and baseline summaries.
+Use the Runs view for trace inspection and the Reports view for eval summaries plus Docs QA and Issue Triage baseline comparisons.
 
 ## Run JSONL Evals
 
@@ -215,7 +215,7 @@ Open the dashboard:
 http://127.0.0.1:8000/dashboard
 ```
 
-The dashboard has a Runs view for trace/replay/diff inspection and a Reports view for Docs QA, Issue Triage, and baseline comparison summaries. Set `AGENT_RELIABILITY_REPORTS_DIR` to point the API at a different reports directory.
+The dashboard has a Runs view for trace/replay/diff inspection and a Reports view for Docs QA, Issue Triage, and switchable baseline comparison summaries. Set `AGENT_RELIABILITY_REPORTS_DIR` to point the API at a different reports directory.
 
 In another shell:
 
