@@ -10,58 +10,90 @@
     <header class="topbar">
       <div>
         <h1>Agent Reliability Lab</h1>
-        <p>Inspect traces, replay saved runs, and compare agent behavior.</p>
+        <p>Inspect traces, replay saved runs, and monitor eval regressions.</p>
       </div>
-      <button id="refresh-runs" type="button">Refresh</button>
+      <div class="topbar-actions">
+        <nav class="tabs" aria-label="Dashboard views">
+          <button id="show-runs" class="tab active" type="button">Runs</button>
+          <button id="show-reports" class="tab" type="button">Reports</button>
+        </nav>
+        <button id="refresh-dashboard" type="button">Refresh</button>
+      </div>
     </header>
 
-    <main class="layout">
-      <aside class="runs-panel">
-        <div class="panel-header">
-          <h2>Runs</h2>
-          <span id="run-count">0</span>
-        </div>
-        <div id="run-list" class="run-list"></div>
-      </aside>
+    <main>
+      <section id="runs-view" class="layout">
+        <aside class="runs-panel">
+          <div class="panel-header">
+            <h2>Runs</h2>
+            <span id="run-count">0</span>
+          </div>
+          <div id="run-list" class="run-list"></div>
+        </aside>
 
-      <section class="trace-panel">
-        <div id="run-summary" class="summary empty">Select a run to inspect its trace.</div>
-        <div class="panel-header">
-          <h2>Trace Timeline</h2>
-        </div>
-        <div id="step-list" class="step-list"></div>
+        <section class="trace-panel">
+          <div id="run-summary" class="summary empty">Select a run to inspect its trace.</div>
+          <div class="panel-header">
+            <h2>Trace Timeline</h2>
+          </div>
+          <div id="step-list" class="step-list"></div>
+        </section>
+
+        <aside class="detail-panel">
+          <div class="panel-section">
+            <h2>Output</h2>
+            <pre id="run-output">{}</pre>
+          </div>
+
+          <div class="panel-section">
+            <h2>Replay</h2>
+            <label class="toggle-row">
+              <input id="fixed-context" type="checkbox" checked />
+              Fixed retrieved context
+            </label>
+            <button id="replay-run" type="button" disabled>Replay selected run</button>
+            <pre id="replay-output">{}</pre>
+          </div>
+
+          <div class="panel-section">
+            <h2>Diff</h2>
+            <label>
+              Base run
+              <input id="base-run-id" type="text" placeholder="run_..." />
+            </label>
+            <label>
+              Candidate run
+              <input id="candidate-run-id" type="text" placeholder="run_..." />
+            </label>
+            <button id="diff-runs" type="button">Compare</button>
+            <pre id="diff-output">{}</pre>
+          </div>
+        </aside>
       </section>
 
-      <aside class="detail-panel">
-        <div class="panel-section">
-          <h2>Output</h2>
-          <pre id="run-output">{}</pre>
-        </div>
+      <section id="reports-view" class="reports-view hidden" aria-live="polite">
+        <div class="reports-grid">
+          <section class="report-panel">
+            <div class="panel-header">
+              <h2>Eval Reports</h2>
+              <span id="reports-dir" class="meta">reports</span>
+            </div>
+            <div id="eval-report-list" class="report-list"></div>
+          </section>
 
-        <div class="panel-section">
-          <h2>Replay</h2>
-          <label class="toggle-row">
-            <input id="fixed-context" type="checkbox" checked />
-            Fixed retrieved context
-          </label>
-          <button id="replay-run" type="button" disabled>Replay selected run</button>
-          <pre id="replay-output">{}</pre>
+          <aside class="report-panel">
+            <div class="panel-header">
+              <h2>Baseline</h2>
+              <span id="baseline-status" class="status-pill">Unavailable</span>
+            </div>
+            <div id="baseline-summary" class="metric-grid"></div>
+            <div class="panel-section">
+              <h2>Changes</h2>
+              <div id="baseline-changes" class="case-list"></div>
+            </div>
+          </aside>
         </div>
-
-        <div class="panel-section">
-          <h2>Diff</h2>
-          <label>
-            Base run
-            <input id="base-run-id" type="text" placeholder="run_..." />
-          </label>
-          <label>
-            Candidate run
-            <input id="candidate-run-id" type="text" placeholder="run_..." />
-          </label>
-          <button id="diff-runs" type="button">Compare</button>
-          <pre id="diff-output">{}</pre>
-        </div>
-      </aside>
+      </section>
     </main>
 
     <script src="/static/app.js"></script>

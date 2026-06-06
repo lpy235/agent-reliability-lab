@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from evals.baseline import compare_eval_reports, write_baseline_report
+from evals.baseline import compare_eval_reports, write_baseline_json_report, write_baseline_report
 from evals.runner import run_eval_file
 
 
@@ -104,6 +104,42 @@ def test_write_baseline_report(tmp_path):
     text = report_path.read_text(encoding="utf-8")
     assert "Regressions: `1`" in text
     assert "required_keyword:DATABASE_URL" in text
+
+
+def test_write_baseline_json_report(tmp_path):
+    comparison = {
+        "baseline_path": "baseline.json",
+        "candidate_path": "candidate.json",
+        "summary": {
+            "baseline_total": 1,
+            "candidate_total": 1,
+            "shared": 1,
+            "regressions": 0,
+            "improvements": 0,
+            "added": 0,
+            "removed": 0,
+        },
+        "regressions": [],
+        "improvements": [],
+        "unchanged": [
+            {
+                "case_id": "case_stable",
+                "before": {"passed": True},
+                "after": {"passed": True},
+                "new_failed_checks": [],
+            }
+        ],
+        "added": [],
+        "removed": [],
+    }
+    report_path = tmp_path / "baseline-comparison.json"
+
+    result = write_baseline_json_report(comparison, report_path)
+
+    assert result["baseline_json_report_path"] == str(report_path)
+    payload = json.loads(report_path.read_text(encoding="utf-8"))
+    assert payload["summary"]["regressions"] == 0
+    assert payload["unchanged"][0]["case_id"] == "case_stable"
 
 
 def test_docs_qa_baseline_matches_current_eval(tmp_path):

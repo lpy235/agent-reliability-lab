@@ -27,10 +27,10 @@ LLM agents often change behavior when prompts, models, tools, or retrieval data 
 - Groundedness, citation, keyword, and latency checks
 - PII redaction and dry-run tool policy checks
 - Markdown eval reports for prompt and model changes
-- JSON eval reports and baseline comparison for regression tracking
+- JSON eval reports and baseline comparison JSON for regression tracking
 - Saved-run replay with fixed retrieved context
 - Run-to-run diff reports for answer, retrieval, steps, citations, and latency
-- Compact browser dashboard for run and trace inspection
+- Compact browser dashboard for run, trace, eval report, and baseline inspection
 - FastAPI endpoints for manual run inspection
 - GitHub Actions CI for tests and the MVP harness
 
@@ -51,7 +51,7 @@ DocsQAAgent / IssueTriageAgent
         |
         +--> Replay + Diff --> Markdown diff report
         |
-        +--> Dashboard + FastAPI endpoints for inspection
+        +--> Dashboard + FastAPI endpoints for run and report inspection
 ```
 
 Core modules:
@@ -158,11 +158,12 @@ Compare two JSON eval reports:
 
 ```bash
 arl-baseline reports/baseline-eval-report.json reports/eval-report.json \
-  --report-path reports/baseline-comparison.md
+  --report-path reports/baseline-comparison.md \
+  --json-report-path reports/baseline-comparison.json
 ```
 
 The command exits with a nonzero status when a previously passing shared case regresses.
-CI gates the Docs QA suite against [baselines/docs_qa_eval_report.json](baselines/docs_qa_eval_report.json) and uploads `reports/baseline-comparison.md` with the other reliability artifacts.
+CI gates the Docs QA suite against [baselines/docs_qa_eval_report.json](baselines/docs_qa_eval_report.json) and uploads Markdown plus JSON baseline comparison reports with the other reliability artifacts.
 
 ## Replay And Diff Runs
 
@@ -193,6 +194,8 @@ Open the dashboard:
 ```text
 http://127.0.0.1:8000/dashboard
 ```
+
+The dashboard has a Runs view for trace/replay/diff inspection and a Reports view for Docs QA, Issue Triage, and baseline comparison summaries. Set `AGENT_RELIABILITY_REPORTS_DIR` to point the API at a different reports directory.
 
 In another shell:
 

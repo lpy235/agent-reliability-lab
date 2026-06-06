@@ -17,7 +17,8 @@ def test_ci_uploads_harness_artifacts():
             "name": "Compare Docs QA baseline",
             "run": (
                 "arl-baseline baselines/docs_qa_eval_report.json reports/eval-report.json "
-                "\\\n  --report-path reports/baseline-comparison.md\n"
+                "\\\n  --report-path reports/baseline-comparison.md "
+                "\\\n  --json-report-path reports/baseline-comparison.json\n"
             ),
         }
     ]

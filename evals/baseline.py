@@ -86,6 +86,13 @@ def write_baseline_report(comparison: dict[str, Any], report_path: str | Path) -
     return {"baseline_report_path": str(path)}
 
 
+def write_baseline_json_report(comparison: dict[str, Any], report_path: str | Path) -> dict[str, str]:
+    path = Path(report_path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(comparison, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    return {"baseline_json_report_path": str(path)}
+
+
 def _compare_case(case_id: str, before: dict[str, Any], after: dict[str, Any]) -> dict[str, Any]:
     return {
         "case_id": case_id,
@@ -135,16 +142,22 @@ def main() -> int:
     parser.add_argument("baseline_report")
     parser.add_argument("candidate_report")
     parser.add_argument("--report-path", default="reports/baseline-comparison.md")
+    parser.add_argument("--json-report-path")
     args = parser.parse_args()
 
     comparison = compare_eval_reports(args.baseline_report, args.candidate_report)
     report = write_baseline_report(comparison, args.report_path)
+    json_report = write_baseline_json_report(comparison, args.json_report_path) if args.json_report_path else {}
     summary = comparison["summary"]
+    json_report_suffix = (
+        f", JSON: {json_report['baseline_json_report_path']}" if json_report else ""
+    )
     print(
         "Baseline comparison complete: "
         f"{summary['regressions']} regressions, "
         f"{summary['improvements']} improvements. "
         f"Report: {report['baseline_report_path']}"
+        f"{json_report_suffix}"
     )
     return 1 if summary["regressions"] else 0
 

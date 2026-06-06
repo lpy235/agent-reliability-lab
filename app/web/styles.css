@@ -36,6 +36,18 @@ button {
   cursor: pointer;
 }
 
+button.tab {
+  min-height: 34px;
+  background: transparent;
+  color: var(--text);
+}
+
+button.tab.active {
+  border-color: var(--accent);
+  background: var(--accent-quiet);
+  color: var(--accent);
+}
+
 button:disabled {
   cursor: not-allowed;
   opacity: 0.5;
@@ -75,6 +87,13 @@ input[type="text"] {
   color: var(--muted);
 }
 
+.topbar-actions,
+.tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .layout {
   display: grid;
   grid-template-columns: minmax(240px, 300px) minmax(360px, 1fr) minmax(320px, 420px);
@@ -84,7 +103,8 @@ input[type="text"] {
 
 .runs-panel,
 .trace-panel,
-.detail-panel {
+.detail-panel,
+.report-panel {
   min-height: calc(100vh - 112px);
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -120,7 +140,10 @@ input[type="text"] {
 
 .run-card,
 .step-card,
-.summary {
+.summary,
+.report-card,
+.metric,
+.case-change {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: #fff;
@@ -162,6 +185,139 @@ input[type="text"] {
   margin-bottom: 12px;
 }
 
+.hidden {
+  display: none;
+}
+
+.reports-view {
+  padding: 16px;
+}
+
+.reports-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 420px);
+  gap: 16px;
+}
+
+.report-list {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 12px;
+}
+
+.report-panel,
+.report-card,
+.case-table-wrap {
+  min-width: 0;
+}
+
+.report-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  padding: 12px;
+}
+
+.report-card .metric-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  padding: 0;
+  margin-bottom: 12px;
+}
+
+.metric span,
+.metric strong {
+  display: block;
+}
+
+.metric span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.metric strong {
+  font-size: 18px;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 24px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #f9fafb;
+  color: var(--muted);
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status-pill.passed {
+  border-color: #86c5b5;
+  background: var(--accent-quiet);
+  color: var(--accent);
+}
+
+.status-pill.failed {
+  border-color: #f0a8a1;
+  background: #fff1f0;
+  color: var(--danger);
+}
+
+.case-table-wrap {
+  overflow: auto;
+}
+
+table {
+  width: 100%;
+  min-width: 620px;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+th,
+td {
+  border-bottom: 1px solid var(--line);
+  padding: 8px;
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.case-list {
+  display: grid;
+  gap: 8px;
+  padding-top: 10px;
+}
+
+.case-change strong,
+.case-change span {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.empty-state {
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  color: var(--muted);
+  padding: 12px;
+}
+
 pre {
   max-height: 280px;
   overflow: auto;
@@ -190,9 +346,36 @@ label {
     grid-template-columns: 1fr;
   }
 
+  .reports-grid {
+    grid-template-columns: 1fr;
+  }
+
   .runs-panel,
   .trace-panel,
-  .detail-panel {
+  .detail-panel,
+  .report-panel {
     min-height: auto;
+  }
+}
+
+@media (max-width: 720px) {
+  .topbar,
+  .topbar-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .tabs {
+    width: 100%;
+  }
+
+  .tabs button,
+  #refresh-dashboard {
+    flex: 1;
+  }
+
+  .metric-grid,
+  .report-card .metric-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

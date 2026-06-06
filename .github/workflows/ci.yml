@@ -34,7 +34,8 @@ jobs:
       - name: Compare Docs QA baseline
         run: |
           arl-baseline baselines/docs_qa_eval_report.json reports/eval-report.json \
-            --report-path reports/baseline-comparison.md
+            --report-path reports/baseline-comparison.md \
+            --json-report-path reports/baseline-comparison.json
 
       - name: Upload reliability artifacts
         if: always()

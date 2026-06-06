@@ -10,6 +10,8 @@ All notable changes to Agent Reliability Lab are documented in this file.
 - JSON eval reports for baseline comparison.
 - `arl-baseline` CLI for comparing eval reports and flagging regressions.
 - Docs QA baseline gate in CI.
+- JSON baseline comparison reports for CI artifacts and dashboard consumption.
+- Dashboard Reports view for eval summaries, case results, and baseline changes.
 
 ## v0.1.0 - 2026-06-05
 
