@@ -128,6 +128,7 @@ arl-harness
 
 The reusable workflow template is also kept at [docs/examples/github-actions-ci.yml](docs/examples/github-actions-ci.yml).
 CI uploads the generated Markdown reports, JSON reports, and `runs.db` as the `agent-reliability-lab-reports` artifact for each run.
+CI also gates the Docs QA and Issue Triage suites against checked-in JSON baselines.
 
 ## Inspect CI Artifacts Locally
 
@@ -182,7 +183,7 @@ arl-baseline reports/baseline-eval-report.json reports/eval-report.json \
 ```
 
 The command exits with a nonzero status when a previously passing shared case regresses.
-CI gates the Docs QA suite against [baselines/docs_qa_eval_report.json](baselines/docs_qa_eval_report.json) and uploads Markdown plus JSON baseline comparison reports with the other reliability artifacts.
+CI gates the Docs QA suite against [baselines/docs_qa_eval_report.json](baselines/docs_qa_eval_report.json) and the Issue Triage suite against [baselines/issue_triage_eval_report.json](baselines/issue_triage_eval_report.json). It uploads Markdown plus JSON baseline comparison reports with the other reliability artifacts.
 
 ## Replay And Diff Runs
 

@@ -156,3 +156,19 @@ def test_docs_qa_baseline_matches_current_eval(tmp_path):
 
     assert comparison["summary"]["shared"] == 2
     assert comparison["summary"]["regressions"] == 0
+
+
+def test_issue_triage_baseline_matches_current_eval(tmp_path):
+    candidate_path = tmp_path / "candidate.json"
+
+    run_eval_file(
+        cases_path="evals/cases/issue_triage.jsonl",
+        docs_dir="sample_docs",
+        db_path=tmp_path / "runs.db",
+        report_path=tmp_path / "issue-triage-report.md",
+        json_report_path=candidate_path,
+    )
+    comparison = compare_eval_reports(Path("baselines/issue_triage_eval_report.json"), candidate_path)
+
+    assert comparison["summary"]["shared"] == 3
+    assert comparison["summary"]["regressions"] == 0

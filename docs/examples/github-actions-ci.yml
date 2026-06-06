@@ -36,6 +36,12 @@ jobs:
             --report-path reports/baseline-comparison.md \
             --json-report-path reports/baseline-comparison.json
 
+      - name: Compare Issue Triage baseline
+        run: |
+          arl-baseline baselines/issue_triage_eval_report.json reports/issue-triage-report.json \
+            --report-path reports/issue-triage-baseline-comparison.md \
+            --json-report-path reports/issue-triage-baseline-comparison.json
+
       - name: Upload reliability artifacts
         if: always()
         uses: actions/upload-artifact@v4

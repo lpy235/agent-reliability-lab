@@ -9,7 +9,7 @@ def test_ci_uploads_harness_artifacts():
     workflow = yaml.safe_load(Path(".github/workflows/ci.yml").read_text(encoding="utf-8"))
     steps = workflow["jobs"]["verify"]["steps"]
 
-    baseline_steps = [step for step in steps if step.get("name") == "Compare Docs QA baseline"]
+    baseline_steps = [step for step in steps if step.get("name", "").startswith("Compare ") and "baseline" in step.get("name", "")]
     upload_steps = [step for step in steps if step.get("uses") == "actions/upload-artifact@v4"]
 
     assert baseline_steps == [
@@ -19,6 +19,14 @@ def test_ci_uploads_harness_artifacts():
                 "arl-baseline baselines/docs_qa_eval_report.json reports/eval-report.json "
                 "\\\n  --report-path reports/baseline-comparison.md "
                 "\\\n  --json-report-path reports/baseline-comparison.json\n"
+            ),
+        },
+        {
+            "name": "Compare Issue Triage baseline",
+            "run": (
+                "arl-baseline baselines/issue_triage_eval_report.json reports/issue-triage-report.json "
+                "\\\n  --report-path reports/issue-triage-baseline-comparison.md "
+                "\\\n  --json-report-path reports/issue-triage-baseline-comparison.json\n"
             ),
         }
     ]

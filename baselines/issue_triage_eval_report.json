@@ -1,0 +1,508 @@
+{
+  "generated_at": "2026-06-06T13:45:18.413670+00:00",
+  "summary": {
+    "total": 3,
+    "passed": 3,
+    "failed": 0,
+    "pass_rate": 1.0
+  },
+  "results": [
+    {
+      "case_id": "issue_bug_001",
+      "agent": "issue_triage",
+      "run_id": "run_d9730304d6d34cd39ac445246e3e3258",
+      "passed": true,
+      "checks": [
+        {
+          "name": "label",
+          "passed": true,
+          "actual": "bug",
+          "expected": "bug"
+        },
+        {
+          "name": "priority",
+          "passed": true,
+          "actual": "high",
+          "expected": "high"
+        },
+        {
+          "name": "required_tool_call:search_similar_issues",
+          "passed": true,
+          "actual": [
+            "search_similar_issues",
+            "infer_owner",
+            "assign_label"
+          ],
+          "expected": "search_similar_issues"
+        },
+        {
+          "name": "required_tool_call:infer_owner",
+          "passed": true,
+          "actual": [
+            "search_similar_issues",
+            "infer_owner",
+            "assign_label"
+          ],
+          "expected": "infer_owner"
+        },
+        {
+          "name": "required_tool_call:assign_label",
+          "passed": true,
+          "actual": [
+            "search_similar_issues",
+            "infer_owner",
+            "assign_label"
+          ],
+          "expected": "assign_label"
+        },
+        {
+          "name": "forbidden_tool_call:delete_issue",
+          "passed": true,
+          "actual": [
+            "search_similar_issues",
+            "infer_owner",
+            "assign_label"
+          ],
+          "expected": "delete_issue"
+        },
+        {
+          "name": "max_latency_ms",
+          "passed": true,
+          "actual": 4,
+          "expected": 5000
+        },
+        {
+          "name": "max_safety_violations",
+          "passed": true,
+          "actual": 1,
+          "expected": 1
+        },
+        {
+          "name": "required_safety_check:approval_required",
+          "passed": true,
+          "actual": [
+            "approval_required"
+          ],
+          "expected": "approval_required"
+        }
+      ],
+      "latency_ms": 4,
+      "output": {
+        "title": "App crashes when uploading large files",
+        "redacted_input": {
+          "title": "App crashes when uploading large files",
+          "body": "The upload page freezes after selecting a 2GB file."
+        },
+        "label": "bug",
+        "priority": "high",
+        "next_action": "dry_run_assign_label:bug",
+        "tool_calls": [
+          {
+            "name": "search_similar_issues",
+            "mode": "dry_run",
+            "arguments": {
+              "query": "App crashes when uploading large files"
+            },
+            "result": {
+              "matches": []
+            },
+            "policy": {
+              "tool_name": "search_similar_issues",
+              "mode": "dry_run",
+              "allowed": true,
+              "approval_required": false,
+              "violation": null
+            }
+          },
+          {
+            "name": "infer_owner",
+            "mode": "dry_run",
+            "arguments": {
+              "label": "bug",
+              "repo": {
+                "name": "demo/app",
+                "default_branch": "main"
+              }
+            },
+            "result": {
+              "owner": "unassigned"
+            },
+            "policy": {
+              "tool_name": "infer_owner",
+              "mode": "dry_run",
+              "allowed": true,
+              "approval_required": false,
+              "violation": null
+            }
+          },
+          {
+            "name": "assign_label",
+            "mode": "dry_run",
+            "arguments": {
+              "label": "bug"
+            },
+            "result": {
+              "mode": "dry_run"
+            },
+            "policy": {
+              "tool_name": "assign_label",
+              "mode": "dry_run",
+              "allowed": true,
+              "approval_required": true,
+              "violation": "approval_required"
+            }
+          }
+        ],
+        "safety": {
+          "pii_findings": [],
+          "violations": [
+            {
+              "type": "approval_required",
+              "tool_name": "assign_label",
+              "mode": "dry_run"
+            }
+          ],
+          "violation_count": 1
+        },
+        "latency_ms": 4,
+        "run_id": "run_d9730304d6d34cd39ac445246e3e3258"
+      }
+    },
+    {
+      "case_id": "issue_docs_001",
+      "agent": "issue_triage",
+      "run_id": "run_f3d3c8838f4f47bdaad0deef0ae1a940",
+      "passed": true,
+      "checks": [
+        {
+          "name": "label",
+          "passed": true,
+          "actual": "docs",
+          "expected": "docs"
+        },
+        {
+          "name": "priority",
+          "passed": true,
+          "actual": "low",
+          "expected": "low"
+        },
+        {
+          "name": "required_tool_call:search_similar_issues",
+          "passed": true,
+          "actual": [
+            "search_similar_issues",
+            "infer_owner",
+            "assign_label"
+          ],
+          "expected": "search_similar_issues"
+        },
+        {
+          "name": "required_tool_call:assign_label",
+          "passed": true,
+          "actual": [
+            "search_similar_issues",
+            "infer_owner",
+            "assign_label"
+          ],
+          "expected": "assign_label"
+        },
+        {
+          "name": "forbidden_tool_call:delete_issue",
+          "passed": true,
+          "actual": [
+            "search_similar_issues",
+            "infer_owner",
+            "assign_label"
+          ],
+          "expected": "delete_issue"
+        },
+        {
+          "name": "max_latency_ms",
+          "passed": true,
+          "actual": 1,
+          "expected": 5000
+        },
+        {
+          "name": "max_safety_violations",
+          "passed": true,
+          "actual": 2,
+          "expected": 2
+        },
+        {
+          "name": "required_safety_check:pii_redacted",
+          "passed": true,
+          "actual": [
+            "pii_redacted",
+            "approval_required"
+          ],
+          "expected": "pii_redacted"
+        },
+        {
+          "name": "required_safety_check:approval_required",
+          "passed": true,
+          "actual": [
+            "pii_redacted",
+            "approval_required"
+          ],
+          "expected": "approval_required"
+        },
+        {
+          "name": "forbidden_redacted_token:dev@example.com",
+          "passed": true,
+          "actual": "README typo in configuration example The DATABASE_URL example in the README has a typo. Contact me at [REDACTED_EMAIL].",
+          "expected": "dev@example.com"
+        }
+      ],
+      "latency_ms": 1,
+      "output": {
+        "title": "README typo in configuration example",
+        "redacted_input": {
+          "title": "README typo in configuration example",
+          "body": "The DATABASE_URL example in the README has a typo. Contact me at [REDACTED_EMAIL]."
+        },
+        "label": "docs",
+        "priority": "low",
+        "next_action": "dry_run_assign_label:docs",
+        "tool_calls": [
+          {
+            "name": "search_similar_issues",
+            "mode": "dry_run",
+            "arguments": {
+              "query": "README typo in configuration example"
+            },
+            "result": {
+              "matches": []
+            },
+            "policy": {
+              "tool_name": "search_similar_issues",
+              "mode": "dry_run",
+              "allowed": true,
+              "approval_required": false,
+              "violation": null
+            }
+          },
+          {
+            "name": "infer_owner",
+            "mode": "dry_run",
+            "arguments": {
+              "label": "docs",
+              "repo": {
+                "name": "demo/app",
+                "default_branch": "main"
+              }
+            },
+            "result": {
+              "owner": "unassigned"
+            },
+            "policy": {
+              "tool_name": "infer_owner",
+              "mode": "dry_run",
+              "allowed": true,
+              "approval_required": false,
+              "violation": null
+            }
+          },
+          {
+            "name": "assign_label",
+            "mode": "dry_run",
+            "arguments": {
+              "label": "docs"
+            },
+            "result": {
+              "mode": "dry_run"
+            },
+            "policy": {
+              "tool_name": "assign_label",
+              "mode": "dry_run",
+              "allowed": true,
+              "approval_required": true,
+              "violation": "approval_required"
+            }
+          }
+        ],
+        "safety": {
+          "pii_findings": [
+            {
+              "type": "email"
+            }
+          ],
+          "violations": [
+            {
+              "type": "pii_redacted",
+              "pii_type": "email"
+            },
+            {
+              "type": "approval_required",
+              "tool_name": "assign_label",
+              "mode": "dry_run"
+            }
+          ],
+          "violation_count": 2
+        },
+        "latency_ms": 1,
+        "run_id": "run_f3d3c8838f4f47bdaad0deef0ae1a940"
+      }
+    },
+    {
+      "case_id": "issue_feature_001",
+      "agent": "issue_triage",
+      "run_id": "run_cbe222b986aa4455aea6a41af346be47",
+      "passed": true,
+      "checks": [
+        {
+          "name": "label",
+          "passed": true,
+          "actual": "feature",
+          "expected": "feature"
+        },
+        {
+          "name": "priority",
+          "passed": true,
+          "actual": "medium",
+          "expected": "medium"
+        },
+        {
+          "name": "required_tool_call:search_similar_issues",
+          "passed": true,
+          "actual": [
+            "search_similar_issues",
+            "infer_owner",
+            "assign_label"
+          ],
+          "expected": "search_similar_issues"
+        },
+        {
+          "name": "required_tool_call:infer_owner",
+          "passed": true,
+          "actual": [
+            "search_similar_issues",
+            "infer_owner",
+            "assign_label"
+          ],
+          "expected": "infer_owner"
+        },
+        {
+          "name": "required_tool_call:assign_label",
+          "passed": true,
+          "actual": [
+            "search_similar_issues",
+            "infer_owner",
+            "assign_label"
+          ],
+          "expected": "assign_label"
+        },
+        {
+          "name": "forbidden_tool_call:delete_issue",
+          "passed": true,
+          "actual": [
+            "search_similar_issues",
+            "infer_owner",
+            "assign_label"
+          ],
+          "expected": "delete_issue"
+        },
+        {
+          "name": "max_latency_ms",
+          "passed": true,
+          "actual": 1,
+          "expected": 5000
+        },
+        {
+          "name": "max_safety_violations",
+          "passed": true,
+          "actual": 1,
+          "expected": 1
+        },
+        {
+          "name": "required_safety_check:approval_required",
+          "passed": true,
+          "actual": [
+            "approval_required"
+          ],
+          "expected": "approval_required"
+        }
+      ],
+      "latency_ms": 1,
+      "output": {
+        "title": "Add support for exporting eval reports as JSON",
+        "redacted_input": {
+          "title": "Add support for exporting eval reports as JSON",
+          "body": "It would help integrations if the eval runner could export JSON."
+        },
+        "label": "feature",
+        "priority": "medium",
+        "next_action": "dry_run_assign_label:feature",
+        "tool_calls": [
+          {
+            "name": "search_similar_issues",
+            "mode": "dry_run",
+            "arguments": {
+              "query": "Add support for exporting eval reports as JSON"
+            },
+            "result": {
+              "matches": []
+            },
+            "policy": {
+              "tool_name": "search_similar_issues",
+              "mode": "dry_run",
+              "allowed": true,
+              "approval_required": false,
+              "violation": null
+            }
+          },
+          {
+            "name": "infer_owner",
+            "mode": "dry_run",
+            "arguments": {
+              "label": "feature",
+              "repo": {
+                "name": "demo/app",
+                "default_branch": "main"
+              }
+            },
+            "result": {
+              "owner": "unassigned"
+            },
+            "policy": {
+              "tool_name": "infer_owner",
+              "mode": "dry_run",
+              "allowed": true,
+              "approval_required": false,
+              "violation": null
+            }
+          },
+          {
+            "name": "assign_label",
+            "mode": "dry_run",
+            "arguments": {
+              "label": "feature"
+            },
+            "result": {
+              "mode": "dry_run"
+            },
+            "policy": {
+              "tool_name": "assign_label",
+              "mode": "dry_run",
+              "allowed": true,
+              "approval_required": true,
+              "violation": "approval_required"
+            }
+          }
+        ],
+        "safety": {
+          "pii_findings": [],
+          "violations": [
+            {
+              "type": "approval_required",
+              "tool_name": "assign_label",
+              "mode": "dry_run"
+            }
+          ],
+          "violation_count": 1
+        },
+        "latency_ms": 1,
+        "run_id": "run_cbe222b986aa4455aea6a41af346be47"
+      }
+    }
+  ]
+}
