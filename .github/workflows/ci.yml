@@ -31,6 +31,11 @@ jobs:
       - name: Run MVP harness
         run: arl-harness
 
+      - name: Compare Docs QA baseline
+        run: |
+          arl-baseline baselines/docs_qa_eval_report.json reports/eval-report.json \
+            --report-path reports/baseline-comparison.md
+
       - name: Upload reliability artifacts
         if: always()
         uses: actions/upload-artifact@v4

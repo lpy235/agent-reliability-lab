@@ -1,0 +1,95 @@
+{
+  "generated_at": "baseline:v0.2-docs-qa",
+  "summary": {
+    "total": 2,
+    "passed": 2,
+    "failed": 0,
+    "pass_rate": 1.0
+  },
+  "results": [
+    {
+      "case_id": "docs_qa_001",
+      "agent": "docs_qa",
+      "run_id": "baseline_docs_qa_001",
+      "passed": true,
+      "checks": [
+        {
+          "name": "required_citation:sample_docs/config.md",
+          "passed": true,
+          "actual": [
+            "sample_docs/config.md",
+            "sample_docs/config.md"
+          ],
+          "expected": "sample_docs/config.md"
+        },
+        {
+          "name": "required_keyword:DATABASE_URL",
+          "passed": true,
+          "actual": "Set `DATABASE_URL` in the environment before starting the service.",
+          "expected": "DATABASE_URL"
+        },
+        {
+          "name": "forbidden_keyword:I don't know",
+          "passed": true,
+          "actual": "Set `DATABASE_URL` in the environment before starting the service.",
+          "expected": "I don't know"
+        },
+        {
+          "name": "max_latency_ms",
+          "passed": true,
+          "actual": 0,
+          "expected": 5000
+        },
+        {
+          "name": "grounded",
+          "passed": true,
+          "actual": true,
+          "expected": true
+        }
+      ],
+      "latency_ms": 0
+    },
+    {
+      "case_id": "docs_qa_002",
+      "agent": "docs_qa",
+      "run_id": "baseline_docs_qa_002",
+      "passed": true,
+      "checks": [
+        {
+          "name": "required_citation:sample_docs/deployment.md",
+          "passed": true,
+          "actual": [
+            "sample_docs/deployment.md",
+            "sample_docs/deployment.md"
+          ],
+          "expected": "sample_docs/deployment.md"
+        },
+        {
+          "name": "required_keyword:uvicorn",
+          "passed": true,
+          "actual": "Run the API with `uvicorn app.main:app --reload`.",
+          "expected": "uvicorn"
+        },
+        {
+          "name": "forbidden_keyword:I don't know",
+          "passed": true,
+          "actual": "Run the API with `uvicorn app.main:app --reload`.",
+          "expected": "I don't know"
+        },
+        {
+          "name": "max_latency_ms",
+          "passed": true,
+          "actual": 0,
+          "expected": 5000
+        },
+        {
+          "name": "grounded",
+          "passed": true,
+          "actual": true,
+          "expected": true
+        }
+      ],
+      "latency_ms": 0
+    }
+  ]
+}

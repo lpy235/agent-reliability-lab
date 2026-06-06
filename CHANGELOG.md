@@ -9,6 +9,7 @@ All notable changes to Agent Reliability Lab are documented in this file.
 - GitHub Actions artifact upload for Markdown eval reports and `runs.db`.
 - JSON eval reports for baseline comparison.
 - `arl-baseline` CLI for comparing eval reports and flagging regressions.
+- Docs QA baseline gate in CI.
 
 ## v0.1.0 - 2026-06-05
 

@@ -162,6 +162,7 @@ arl-baseline reports/baseline-eval-report.json reports/eval-report.json \
 ```
 
 The command exits with a nonzero status when a previously passing shared case regresses.
+CI gates the Docs QA suite against [baselines/docs_qa_eval_report.json](baselines/docs_qa_eval_report.json) and uploads `reports/baseline-comparison.md` with the other reliability artifacts.
 
 ## Replay And Diff Runs
 

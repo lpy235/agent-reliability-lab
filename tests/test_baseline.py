@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 from evals.baseline import compare_eval_reports, write_baseline_report
+from evals.runner import run_eval_file
 
 
 def _write_report(path, results):
@@ -102,3 +104,19 @@ def test_write_baseline_report(tmp_path):
     text = report_path.read_text(encoding="utf-8")
     assert "Regressions: `1`" in text
     assert "required_keyword:DATABASE_URL" in text
+
+
+def test_docs_qa_baseline_matches_current_eval(tmp_path):
+    candidate_path = tmp_path / "candidate.json"
+
+    run_eval_file(
+        cases_path="evals/cases/docs_qa.jsonl",
+        docs_dir="sample_docs",
+        db_path=tmp_path / "runs.db",
+        report_path=tmp_path / "eval-report.md",
+        json_report_path=candidate_path,
+    )
+    comparison = compare_eval_reports(Path("baselines/docs_qa_eval_report.json"), candidate_path)
+
+    assert comparison["summary"]["shared"] == 2
+    assert comparison["summary"]["regressions"] == 0
