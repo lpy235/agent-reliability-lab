@@ -4,7 +4,10 @@ All notable changes to Agent Reliability Lab are documented in this file.
 
 ## Unreleased
 
-No unreleased changes.
+### Added
+
+- `arl-dashboard` CLI for opening saved CI artifacts with explicit `runs.db` and reports paths.
+- README instructions for inspecting `agent-reliability-lab-reports` artifacts locally.
 
 ## v0.2.0 - 2026-06-06
 

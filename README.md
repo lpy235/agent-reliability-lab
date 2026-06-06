@@ -129,6 +129,25 @@ arl-harness
 The reusable workflow template is also kept at [docs/examples/github-actions-ci.yml](docs/examples/github-actions-ci.yml).
 CI uploads the generated Markdown reports, JSON reports, and `runs.db` as the `agent-reliability-lab-reports` artifact for each run.
 
+## Inspect CI Artifacts Locally
+
+Download the `agent-reliability-lab-reports` artifact from a GitHub Actions run, then start the dashboard against the extracted files:
+
+```bash
+unzip agent-reliability-lab-reports.zip -d agent-reliability-lab-reports
+arl-dashboard \
+  --db-path agent-reliability-lab-reports/runs.db \
+  --reports-dir agent-reliability-lab-reports/reports
+```
+
+Open:
+
+```text
+http://127.0.0.1:8000/dashboard
+```
+
+Use the Runs view for trace inspection and the Reports view for eval and baseline summaries.
+
 ## Run JSONL Evals
 
 ```bash
@@ -237,6 +256,7 @@ This project is not a chat demo. It demonstrates reliability engineering for too
 - `arl-harness`: run the local demo, Docs QA evals, and issue triage evals.
 - `arl-eval`: run a JSONL eval file and write a Markdown report.
 - `arl-baseline`: compare two JSON eval reports and flag regressions.
+- `arl-dashboard`: start the dashboard against a saved `runs.db` and reports directory.
 - `arl-replay`: replay a saved Docs QA run with fixed or live retrieval context.
 - `arl-diff`: compare two saved runs and optionally write a Markdown diff report.
 - `arl-api`: start the FastAPI app and browser dashboard.

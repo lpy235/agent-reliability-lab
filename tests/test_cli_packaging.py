@@ -15,6 +15,7 @@ def test_pyproject_defines_console_scripts():
     assert metadata["project"]["scripts"] == {
         "arl-api": "app.cli:main",
         "arl-baseline": "evals.baseline:main",
+        "arl-dashboard": "app.cli:dashboard_main",
         "arl-diff": "tracing.diff:main",
         "arl-eval": "evals.runner:main",
         "arl-harness": "harness:main",
@@ -40,6 +41,37 @@ def test_api_cli_sets_db_path_and_runs_uvicorn(monkeypatch):
     assert exit_code == 0
     assert calls == [{"app_path": "app.main:app", "host": "0.0.0.0", "port": 8765, "reload": True}]
     assert cli.os.environ["AGENT_RELIABILITY_DB"] == "tmp-runs.db"
+
+
+def test_dashboard_cli_sets_db_and_reports_paths(monkeypatch):
+    calls = []
+
+    def fake_run(app_path, host, port, reload):
+        calls.append({"app_path": app_path, "host": host, "port": port, "reload": reload})
+
+    monkeypatch.setattr(cli.uvicorn, "run", fake_run)
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "arl-dashboard",
+            "--host",
+            "0.0.0.0",
+            "--port",
+            "8766",
+            "--db-path",
+            "artifact/runs.db",
+            "--reports-dir",
+            "artifact/reports",
+        ],
+    )
+
+    exit_code = cli.dashboard_main()
+
+    assert exit_code == 0
+    assert calls == [{"app_path": "app.main:app", "host": "0.0.0.0", "port": 8766, "reload": False}]
+    assert cli.os.environ["AGENT_RELIABILITY_DB"] == "artifact/runs.db"
+    assert cli.os.environ["AGENT_RELIABILITY_REPORTS_DIR"] == "artifact/reports"
 
 
 def test_harness_resolves_bundled_demo_files_outside_repo(tmp_path, monkeypatch):
